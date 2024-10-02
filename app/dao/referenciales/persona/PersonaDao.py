@@ -4,7 +4,7 @@ from app.conexion.Conexion import Conexion
 
 class PersonaDao:
 
-    def getPersonas(self):
+    def getPersona(self):
 
         personaSQL = """
         SELECT id, descripcion
@@ -32,7 +32,7 @@ class PersonaDao:
     def getPersonaById(self, id):
 
         personaSQL = """
-        SELECT id, descripcion
+        SELECT id, descripción
         FROM personas WHERE id=%s
         """
         # objeto conexion
@@ -60,7 +60,7 @@ class PersonaDao:
     def guardarPersona(self, descripcion):
 
         insertPersonaSQL = """
-   INSERT INTO personas(descripcion) VALUES(%s) RETURNING id        
+   INSERT INTO personas(descripción) VALUES(%s) RETURNING id        
    """
 
         conexion = Conexion()
@@ -85,7 +85,7 @@ class PersonaDao:
             cur.close()
             con.close()
 
-    def updatePersona(self, id, descripcion):
+    def updatePersona(self,id, descripcion):
 
         updatePersonaSQL = """
         UPDATE personas
@@ -98,7 +98,7 @@ class PersonaDao:
         cur = con.cursor()
 
         try:
-            cur.execute(updatePersonaSQL, (descripcion, id,))
+            cur.execute(updatePersonaSQL, (descripcion, id))
             filas_afectadas = cur.rowcount # Obtener el número de filas afectadas            con.commit()
             con.commit()
         

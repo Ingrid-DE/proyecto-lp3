@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
 {% block titulo %}
-Personas
+Pacientes
 {% endblock %}
 
 {% block contenido %}
 <div class="container mt-4">
-    <h3>Agrega tus datos</h3>
+    <h3>Listar Pacientes</h3>
 
     <!-- tarjeta -->
     <div class="card">
@@ -18,12 +18,6 @@ Personas
           <thead>
             <tr>
               <th>Nombre</th>
-              <th>Apellido </th>
-              <th>cedula</th>
-              <th>Dirección</th>
-              <th>Teléfono</th>
-              <th>Ocupación</th>
-              <th>Estado civil</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -48,36 +42,23 @@ Personas
       <!-- Modal body -->
       <div class="modal-body">
         <div class="form-group">
-          <input type="hidden" id="txtIdPersona">
+          <input type="hidden" id="txtIdPaciente">
           <label for="txtDescripcion">Nombre:</label>
-          <input type="text" class="form-control" placeholder="Ingrese su nombre" id="txtDescripcion">
-          <label for="txtApellido">Apellido:</label>
-          <input type="text" class="form-control" placeholder="Ingrese su apellido" id="txtApellido">
-          <label for="txtCedula">N° de cédula:</label>
-          <input type="text" class="form-control" placeholder="Ingrese su n° de cédula" id="txtCedula">
-          <label for="txtDireccion">Dirección:</label>
-          <input type="text" class="form-control" placeholder="Ingrese su dirección" id="txtDirección">
-          <label for="txtTelefono">N° de teléfono:</label>
-          <input type="text" class="form-control" placeholder="Ingrese su n° de teléfono" id="txtTelefono">
-          <label for="txtOcupación">Ocupación:</label>
-          <input type="text" class="form-control" placeholder="Ingrese su ocupación" id="txtOcupación">
-          <label for="txtEstado_civil">Estado civil:</label>
-          <input type="text" class="form-control" placeholder="Ingrese su Estado civil" id="txtEstado_civil">
-       </div>
-      </div> 
-     
+          <input type="text" class="form-control" placeholder="Ingrese nombre del paciente" id="txtDescripcion">
+        </div>
+      </div>
+
       <!-- Modal footer -->
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" id="btnGuardar">Guardar</button>
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
       </div>
 
-      
-     </div>
     </div>
-  </div>
-
-  <div class="row mt-4 d-none" id="rowAlerta">
+   </div>
+ </div>
+    
+ <div class="row mt-4 d-none" id="rowAlerta">
         <div class="col col-md-12">
             <div class="alert alert-success">
                 <strong>Registro Exitoso!</strong>
@@ -96,7 +77,7 @@ Personas
       language: {
         url: "{{ url_for('static', filename='vendor/datatables/es-ES.json') }}",
       },
-      ajax:'/api/v1/personas',      
+      ajax:'/api/v1/pacientes',      
       columns: [
         { data: 'descripcion' },
         { data: function(row) {
@@ -104,32 +85,30 @@ Personas
                     <button type="button" name="btn_eliminar" class="btn btn-danger" data-id="${row.id}">Eliminar</button>`
           }
         }
-      ] 
+      ]
     });
   }
 
   const agregar = () => {
     $('#btnAgregar').on('click', function(){
       // Setear un título a modal
-      $('#modalTitle').text("Agrega tus datos aquí");
+      $('#modalTitle').text("Agrege datos del paciente");
       // inicia ventana modal
-      $('#txtIdPersona').val("");
+      $('#txtIdCiudad').val("");
       $('#txtDescripcion').val("");
       $('#modalFormulario').modal();
     });
   }
 
-  
-  
   const guardar = () => {
     $('#btnGuardar').on('click', function() {
-      const idPersona = $('#txtIdPersona').val();
-      const nuevoDescripcion=$('#txtDescricion').val("");
+      const idPaciente = $('#txtIdCiudad').val();
+      const nuevaDescripcion = $('#txtDescripcion').val();
       const tabla = $('#tbl').DataTable();
 
-      if(idPersona) {
+      if(idPaciente) {
         // update
-        fetch(`/api/v1/personas/${idPersona}`, {
+        fetch(`/api/v1/pacientes/${idPaciente}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -139,17 +118,17 @@ Personas
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "Tus datos a sido guardado correctamente.", "success");
+            Swal.fire("Actualizado", "El paciente ha sido actualizada correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }
         }).catch(err => {
           console.error(err);
-          Swal.fire("Error", "Ocurrió un error al actualizar los datos dela persona.", "error");
+          Swal.fire("Error", "Ocurrió un error al actualizar la ciudad.", "error");
         });
       } else {
         // insert
-        fetch(`/api/v1/personas`, {
+        fetch(`/api/v1/pacientes`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -159,13 +138,13 @@ Personas
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "Tus datos a sido guardado correctamente.", "success");
+            Swal.fire("Actualizado", "El paciente a sido agregada correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }
         }).catch(err => {
           console.error(err);
-          Swal.fire("Error", "Ocurrió un error al guardar los datos dela persona.", "error");
+          Swal.fire("Error", "Ocurrió un error al guardar al paciente.", "error");
         });
       }
       $('#txtDescripcion').val("");
@@ -184,13 +163,13 @@ Personas
       }).then((result) => {
         if (result.isConfirmed) {
           //Swal.fire("Saved!", "", "success");
-          $('#modalTitle').text("Editar una Persona");
+          $('#modalTitle').text("Editar una Ciudad");
 
-          const idPersona = $(this).data('id');
-          $('#txtIdPersona').val(idPersona);
+          const idPaciente = $(this).data('id');
+          $('#txtIdCiudad').val(idPaciente);
 
           // Necesitamos obtener la descripción del backend
-          fetch(`/api/v1/personas/${idPersona}`, {
+          fetch(`/api/v1/pacientes/${idPaciente}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json'
@@ -198,7 +177,7 @@ Personas
           })
           .then(resp => resp.json())
           .then(data => {
-         $('#txtNombre').val("");(data.data.descripcion);
+            $('#txtDescripcion').val(data.data.descripcion);
             $('#modalFormulario').modal();
           });
         }
@@ -208,7 +187,7 @@ Personas
 
   const eliminar = () => {
     $('#tbl').on('click', 'button[name="btn_eliminar"]',function(){
-      const idPersona = $(this).data('id');
+      const idPaciente = $(this).data('id');
       // Mostrar mensaje de confirmación usando sweetalert
       Swal.fire({
         title: "¿Deseas eliminar este registro?",
@@ -217,7 +196,7 @@ Personas
         cancelButtonText: `No`
       }).then((result) => {
         if (result.isConfirmed) {
-          fetch(`/api/v1/personas/${idPersona}`, {
+          fetch(`/api/v1/pacientes/${idPaciente}`, {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json'
@@ -235,7 +214,7 @@ Personas
               Swal.fire(data.error);
             }
           }).catch(err => {
-            Swal.fire("Error", "Ocurrió un error al eliminar los datos de la persona.", "error");
+            Swal.fire("Error", "Ocurrió un error al eliminar la ciudad.", "error");
           });
         }
       });

@@ -9,7 +9,7 @@ def getMedicos():
     meddao = MedicoDao()
 
     try:
-        medicos = meddao.getMedicos()
+        medicos = meddao.getMedico()
 
         return jsonify({
             'success': True,

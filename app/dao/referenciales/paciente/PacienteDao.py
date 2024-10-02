@@ -2,65 +2,65 @@
 from flask import current_app as app
 from app.conexion.Conexion import Conexion
 
-class MedicoDao:
+class PacienteDao:
 
-    def getMedico(self):
+    def getPaciente(self):              
 
-        medicoSQL = """
+        pacienteSQL = """
         SELECT id, descripcion
-        FROM medicos
+        FROM pacientes
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(medicoSQL)
-            medicos = cur.fetchall() # trae datos de la bd
+            cur.execute(pacienteSQL)
+            pacientes = cur.fetchall() # trae datos de la bd
 
             # Transformar los datos en una lista de diccionarios
-            return [{'id': medico[0], 'descripcion': medico[1]} for medico in medicos]
+            return [{'id': paciente[0], 'descripcion': paciente[1]} for paciente in pacientes]
 
         except Exception as e:
-            app.logger.error(f"Error al obtener todas las medicos: {str(e)}")
+            app.logger.error(f"Error al obtener todas las pacientes: {str(e)}")
             return []
 
         finally:
             cur.close()
             con.close()
 
-    def getMedicoById(self, id):
+    def getPacienteById(self, id):
 
-        medicoSQL = """
+        pacienteSQL = """
         SELECT id, descripcion
-        FROM medicos WHERE id=%s
+        FROM pacientes WHERE id=%s
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(medicoSQL, (id,))
-            medicoEncontrada = cur.fetchone() # Obtener una sola fila
-            if medicoEncontrada:
+            cur.execute(pacienteSQL, (id,))
+            pacienteEncontrada = cur.fetchone() # Obtener una sola fila
+            if pacienteEncontrada:
                 return {
-                        "id": medicoEncontrada[0],
-                        "descripcion": medicoEncontrada[1]
-                    }  # Retornar los datos de la medico
+                        "id": pacienteEncontrada[0],
+                        "descripcion": pacienteEncontrada[1]
+                    }  # Retornar los datos de la ciudad
             else:
-                return None # Retornar None si no se encuentra la medico
+                return None # Retornar None si no se encuentra la ciudad
         except Exception as e:
-            app.logger.error(f"Error al obtener medico: {str(e)}")
+            app.logger.error(f"Error al obtener paciente: {str(e)}")
             return None
 
         finally:
             cur.close()
             con.close()
 
-    def guardarMedico(self, descripcion):
+    def guardarPaciente(self, descripcion):
 
-        insertMedicoSQL = """
-   INSERT INTO medicos(descripcion) VALUES(%s) RETURNING id        
+        insertPacienteSQL = """
+   INSERT INTO pacientes(descripcion) VALUES(%s) RETURNING id        
    """
 
         conexion = Conexion()
@@ -69,14 +69,14 @@ class MedicoDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(insertMedicoSQL, (descripcion,))
-            medico_id = cur.fetchone()[0]
+            cur.execute(insertPacienteSQL, (descripcion,))
+            paciente_id = cur.fetchone()[0]
             con.commit() # se confirma la insercion
-            return medico_id
+            return paciente_id
         
         # Si algo fallo entra aqui
         except Exception as e:
-            app.logger.error(f"Error al insertar medico: {str(e)}")
+            app.logger.error(f"Error al insertar paciente: {str(e)}")
             con.rollback() # retroceder si hubo error
             return False
 
@@ -85,10 +85,10 @@ class MedicoDao:
             cur.close()
             con.close()
 
-    def updateMedico(self, id, descripcion):
+    def updatePaciente(self, id, descripcion):
 
-        updateMedicoSQL = """
-        UPDATE medicos
+        updatePacienteSQL = """
+        UPDATE pacientes
         SET descripcion=%s
         WHERE id=%s
         """
@@ -98,14 +98,14 @@ class MedicoDao:
         cur = con.cursor()
 
         try:
-            cur.execute(updateMedicoSQL, (descripcion, id,))
+            cur.execute(updatePacienteSQL, (descripcion, id,))
             filas_afectadas = cur.rowcount # Obtener el número de filas afectadas            con.commit()
             con.commit()
         
             return filas_afectadas > 0 # Retornar True si se actualizó al menos una fila
 
         except Exception as e:
-            app.logger.error(f"Error al actualizar medico: {str(e)}")
+            app.logger.error(f"Error al actualizar paciente: {str(e)}")
             con.rollback()
             return False 
                
@@ -113,10 +113,10 @@ class MedicoDao:
             cur.close()
             con.close()
 
-    def deleteMedico(self, id):
+    def deletePaciente(self, id):
 
-        updateMedicoSQL = """
-        DELETE FROM medicos
+        updatePacienteSQL = """
+        DELETE FROM pacientes
         WHERE id=%s
         """
 
@@ -126,13 +126,13 @@ class MedicoDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(updateMedicoSQL, (id,))
+            cur.execute(updatePacienteSQL, (id,))
             rows_affected = cur.rowcount
             con.commit()
 
             return rows_affected > 0  # Retornar True si se eliminó al menos una fila        
         except Exception as e:
-            app.logger.error(f"Error al eliminar medico: {str(e)}")
+            app.logger.error(f"Error al eliminar ciudad: {str(e)}")
             con.rollback()
             return False
 

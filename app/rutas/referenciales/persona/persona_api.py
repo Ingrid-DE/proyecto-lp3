@@ -57,7 +57,7 @@ def addPersona():
     perdao = PersonaDao()
 
     # Validar que el JSON no esté vacío y tenga las propiedades necesarias
-    campos_requeridos = ['descripcion']
+    campos_requeridos = ['descripcion', 'Apellido', 'cedula']
 
     # Verificar si faltan campos o son vacíos
     for campo in campos_requeridos:
@@ -69,11 +69,16 @@ def addPersona():
 
     try:
         descripcion = data['descripcion'].upper()
-        persona_id = perdao.guardarPersona(descripcion)
+        apellido = data['apellido'].upper()
+        cedula = data['cedula'].upper()
+
+        persona_id = perdao.guardarPersona(descripcion, apellido, cedula)
         if persona_id is not None:
             return jsonify({
                 'success': True,
                 'data': {'id': persona_id, 'descripcion': descripcion},
+                'data': {'id': persona_id, 'apellido': apellido},
+                'data': {'id': persona_id, 'cedula': cedula},
                 'error': None
             }), 201
         else:
@@ -91,7 +96,7 @@ def updatePersona(persona_id):
     perdao = PersonaDao()
 
     # Validar que el JSON no esté vacío y tenga las propiedades necesarias
-    campos_requeridos = ['descripcion']
+    campos_requeridos = ['descripcion', 'Apellido', 'cedula']
 
     # Verificar si faltan campos o son vacíos
     for campo in campos_requeridos:
@@ -101,14 +106,16 @@ def updatePersona(persona_id):
                             'error': f'El campo {campo} es obligatorio y no puede estar vacío.'
                             }), 400
     descripcion = data['descripcion']
+    apellido = data['apellido']
+    cedula = data['cedula']
     try:
-        if perdao.updatePersona(persona_id, descripcion.upper()):
+        if perdao.updatePersona(persona_id, descripcion.upper, apellido.upper, cedula.upper()):
             return jsonify({
                 'success': True,
-                'data': {'id': persona_id, 'descripcion': descripcion},
+                'data': {'id': persona_id, 'descripcion': descripcion, 'apellido': apellido,'cedula': cedula },
                 'error': None
             }), 200
-    
+        else:
             return jsonify({
                 'success': False,
                 'error': 'No se encontró la persona con el ID proporcionado o no se pudo actualizar.'

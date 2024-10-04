@@ -9,11 +9,7 @@ CREATE TABLE
 		id serial PRIMARY KEY,
 		descripcion varchar(60) UNIQUE,
 		apellido varchar(50),
-		numero_cedula decimal(8) UNIQUE,
-		dirección varchar(50),
-		numero_telefono decimal(9) UNIQUE,
-		ocupacion varchar(60) UNIQUE,
-		estado_civil varchar(60) UNIQUE
+		cedula TEXT NOT NULL
 	);
 
 CREATE TABLE
@@ -23,7 +19,19 @@ CREATE TABLE
 	);
 
 CREATE TABLE
-		pacientes(
+	pacientes(
+		id serial PRIMARY KEY
+		, descripcion varchar(60) UNIQUE
+	);
+
+CREATE TABLE
+	servicios(
+		id serial PRIMARY KEY
+		, descripcion varchar(60) UNIQUE
+	);
+
+CREATE TABLE
+	ocupaciones(
 		id serial PRIMARY KEY
 		, descripcion varchar(60) UNIQUE
 	);

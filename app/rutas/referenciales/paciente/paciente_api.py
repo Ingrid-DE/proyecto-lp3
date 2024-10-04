@@ -108,7 +108,7 @@ def updatePaciente(paciente_id):
                 'data': {'id': paciente_id, 'descripcion': descripcion},
                 'error': None
             }), 200
-    
+        else:
             return jsonify({
                 'success': False,
                 'error': 'No se encontró la ciudad con el ID proporcionado o no se pudo actualizar.'

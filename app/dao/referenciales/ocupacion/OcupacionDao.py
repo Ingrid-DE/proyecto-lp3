@@ -2,67 +2,65 @@
 from flask import current_app as app
 from app.conexion.Conexion import Conexion
 
-class PersonaDao:
+class OcupacionDao:
 
-    def getPersonas(self):
+    def getOcupaciones(self):
 
-        personaSQL = """
-        SELECT id, descripcion, apellido, cedula
-        FROM personas
+        ocupacionSQL = """
+        SELECT id, descripcion
+        FROM ocupaciones
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(personaSQL)
-            personas = cur.fetchall() # trae datos de la bd
+            cur.execute(ocupacionSQL)
+            ocupaciones = cur.fetchall() # trae datos de la bd
 
             # Transformar los datos en una lista de diccionarios
-            return [{'id': persona[0], 'descripcion': persona[1],'apellido': persona[2], 'cedula': persona[3]} for persona in personas]
+            return [{'id': ocupacion[0], 'descripcion': ocupacion[1]} for ocupacion in ocupaciones]
 
         except Exception as e:
-            app.logger.error(f"Error al obtener todas las personas: {str(e)}")
+            app.logger.error(f"Error al obtener todas las ocupaciones: {str(e)}")
             return []
 
         finally:
             cur.close()
             con.close()
 
-    def getPersonaById(self, id):
+    def getOcupacionById(self, id):
 
-        personaSQL = """
-        SELECT id, descripcion, apellido, cedula
-        FROM personas WHERE id=%s
+        ocupacionSQL = """
+        SELECT id, descripcion
+        FROM ocupaciones WHERE id=%s
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(personaSQL, (id,))
-            personaEncontrada = cur.fetchone() # Obtener una sola fila
-            if personaEncontrada:
+            cur.execute(ocupacionSQL, (id,))
+            ocupacionEncontrada = cur.fetchone() # Obtener una sola fila
+            if ocupacionEncontrada:
                 return {
-                        "id": personaEncontrada[0],
-                        "descripcion": personaEncontrada[1],
-                        "apellido": personaEncontrada[2],
-                        "cedula": personaEncontrada[3],
-                    }  # Retornar los datos de la persona
+                        "id": ocupacionEncontrada[0],
+                        "descripcion": ocupacionEncontrada[1]
+                    }  # Retornar los datos de la ocupacion
             else:
-                return None # Retornar None si no se encuentra la persona
+                return None # Retornar None si no se encuentra la ocupacion
         except Exception as e:
-            app.logger.error(f"Error al obtener persona: {str(e)}")
+            app.logger.error(f"Error al obtener ocupacion: {str(e)}")
             return None
 
         finally:
             cur.close()
             con.close()
 
-    def guardarPersona(self, descripcion, apellido, cedula):
+    def guardarOcupacion(self, descripcion):
 
-        insertPersonaSQL = """
-   INSERT INTO personas( id, descripcion, apellido, cedula) VALUES(%s, %s, %s, %s) RETURNING id        
+        insertOcupacionSQL = """
+   INSERT INTO ocupaciones(descripcion) VALUES(%s) RETURNING id        
    """
 
         conexion = Conexion()
@@ -71,14 +69,14 @@ class PersonaDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(insertPersonaSQL, (descripcion, apellido, cedula))
-            persona_id = cur.fetchone()[0]
+            cur.execute(insertOcupacionSQL, (descripcion,))
+            ocupacion_id = cur.fetchone()[0]
             con.commit() # se confirma la insercion
-            return persona_id
+            return ocupacion_id
         
         # Si algo fallo entra aqui
         except Exception as e:
-            app.logger.error(f"Error al insertar persona: {str(e)}")
+            app.logger.error(f"Error al insertar ocupacion: {str(e)}")
             con.rollback() # retroceder si hubo error
             return False
 
@@ -87,13 +85,11 @@ class PersonaDao:
             cur.close()
             con.close()
 
-    def updatePersona(self, id, descripcion, apellido, cedula):
+    def updateOcupacion(self, id, descripcion):
 
-        updatePersonaSQL = """
-        UPDATE personas
+        updateOcupacionSQL = """
+        UPDATE ocupaciones
         SET descripcion=%s
-        SET apellido=%s
-        SET cedula=%s
         WHERE id=%s
         """
 
@@ -102,14 +98,14 @@ class PersonaDao:
         cur = con.cursor()
 
         try:
-            cur.execute(updatePersonaSQL, (cedula,apellido,descripcion, id))
+            cur.execute(updateOcupacionSQL, (descripcion, id,))
             filas_afectadas = cur.rowcount # Obtener el número de filas afectadas            con.commit()
             con.commit()
         
             return filas_afectadas > 0 # Retornar True si se actualizó al menos una fila
 
         except Exception as e:
-            app.logger.error(f"Error al actualizar persona: {str(e)}")
+            app.logger.error(f"Error al actualizar ocupacion: {str(e)}")
             con.rollback()
             return False 
                
@@ -117,10 +113,10 @@ class PersonaDao:
             cur.close()
             con.close()
 
-    def deletePersona(self, id):
+    def deleteOcupacion(self, id):
 
-        updatePersonaSQL = """
-        DELETE FROM personas
+        updateOcupacionSQL = """
+        DELETE FROM ocupaciones
         WHERE id=%s
         """
 
@@ -130,13 +126,13 @@ class PersonaDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(updatePersonaSQL, (id,))
+            cur.execute(updateOcupacionSQL, (id,))
             rows_affected = cur.rowcount
             con.commit()
 
             return rows_affected > 0  # Retornar True si se eliminó al menos una fila        
         except Exception as e:
-            app.logger.error(f"Error al eliminar persona: {str(e)}")
+            app.logger.error(f"Error al eliminar ocupacion: {str(e)}")
             con.rollback()
             return False
 

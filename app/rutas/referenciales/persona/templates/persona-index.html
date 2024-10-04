@@ -19,11 +19,7 @@ Personas
             <tr>
               <th>Nombre</th>
               <th>Apellido </th>
-              <th>cedula</th>
-              <th>Dirección</th>
-              <th>Teléfono</th>
-              <th>Ocupación</th>
-              <th>Estado civil</th>
+              <th>Cédula</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -53,16 +49,8 @@ Personas
           <input type="text" class="form-control" placeholder="Ingrese su nombre" id="txtDescripcion">
           <label for="txtApellido">Apellido:</label>
           <input type="text" class="form-control" placeholder="Ingrese su apellido" id="txtApellido">
-          <label for="txtCedula">N° de cédula:</label>
+          <label for="txtCedula">N° de Cédula:</label>
           <input type="text" class="form-control" placeholder="Ingrese su n° de cédula" id="txtCedula">
-          <label for="txtDireccion">Dirección:</label>
-          <input type="text" class="form-control" placeholder="Ingrese su dirección" id="txtDirección">
-          <label for="txtTelefono">N° de teléfono:</label>
-          <input type="text" class="form-control" placeholder="Ingrese su n° de teléfono" id="txtTelefono">
-          <label for="txtOcupación">Ocupación:</label>
-          <input type="text" class="form-control" placeholder="Ingrese su ocupación" id="txtOcupación">
-          <label for="txtEstado_civil">Estado civil:</label>
-          <input type="text" class="form-control" placeholder="Ingrese su Estado civil" id="txtEstado_civil">
        </div>
       </div> 
      
@@ -99,6 +87,8 @@ Personas
       ajax:'/api/v1/personas',      
       columns: [
         { data: 'descripcion' },
+        { data: 'apellido' },
+        { data: 'cedula' },
         { data: function(row) {
             return `<button type="button" name="btn_editar" class="btn btn-primary" data-id="${row.id}">Editar</button>
                     <button type="button" name="btn_eliminar" class="btn btn-danger" data-id="${row.id}">Eliminar</button>`
@@ -115,16 +105,18 @@ Personas
       // inicia ventana modal
       $('#txtIdPersona').val("");
       $('#txtDescripcion').val("");
+      $('#txtApellido').val("");
+      $('#txtCedula').val("");
       $('#modalFormulario').modal();
     });
   }
 
-  
-  
-  const guardar = () => {
+ const guardar = () => {
     $('#btnGuardar').on('click', function() {
       const idPersona = $('#txtIdPersona').val();
-      const nuevoDescripcion=$('#txtDescricion').val("");
+      const nuevaDescripcion=$('#txtDescripcion').val("");
+      const nuevoApellido=$('#txtApellido').val("");
+      const nuevoCedula=$('#txtCedula').val("");
       const tabla = $('#tbl').DataTable();
 
       if(idPersona) {
@@ -133,7 +125,7 @@ Personas
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
-          }, body: JSON.stringify({ descripcion: nuevaDescripcion})
+          }, body: JSON.stringify({ descripcion: nuevaDescripcion, apellido: nuevoApellido, cedula: nuevoCedula})
         })
         .then(resp => resp.json())
         .then(data => {
@@ -145,15 +137,15 @@ Personas
           }
         }).catch(err => {
           console.error(err);
-          Swal.fire("Error", "Ocurrió un error al actualizar los datos dela persona.", "error");
+          Swal.fire("Error", "Ocurrió un error al actualizar los datos de la persona.", "error");
         });
       } else {
         // insert
-        fetch(`/api/v1/personas`, {
+        fetch(`/api/v1/personas`, { 
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
-          }, body: JSON.stringify({ descripcion: nuevaDescripcion})
+          }, body: JSON.stringify({ descripcion: nuevaDescripcion, apellido: nuevoApellido, cedula: nuevoCedula})
         })
         .then(resp => resp.json())
         .then(data => {
@@ -161,14 +153,16 @@ Personas
             tabla.ajax.reload();
             Swal.fire("Actualizado", "Tus datos a sido guardado correctamente.", "success");
           } else {
-            Swal.fire(data.error);
+            Swal.fire(data.err);
           }
         }).catch(err => {
-          console.error(err);
-          Swal.fire("Error", "Ocurrió un error al guardar los datos dela persona.", "error");
+          console.error(error);
+          Swal.fire("Error", "Ocurrió un error al guardar los datos de la persona.", "error");
         });
       }
       $('#txtDescripcion').val("");
+      $('#txtApellido').val("");
+      $('#txtCedula').val("");
       $('#modalFormulario').modal("hide");
     });
   }
@@ -198,7 +192,9 @@ Personas
           })
           .then(resp => resp.json())
           .then(data => {
-         $('#txtNombre').val("");(data.data.descripcion);
+         $('#txtDescripcion').val("");(data.data.descripcion);
+         $('#txtApellido').val("");(data.data.apellido);
+         $('#txtCedula').val("");(data.data.cedula);
             $('#modalFormulario').modal();
           });
         }

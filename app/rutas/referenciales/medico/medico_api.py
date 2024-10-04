@@ -108,7 +108,7 @@ def updateMedico(medico_id):
                 'data': {'id': medico_id, 'descripcion': descripcion},
                 'error': None
             }), 200
-    
+        else:
             return jsonify({
                 'success': False,
                 'error': 'No se encontró al medico con el ID proporcionado o no se pudo actualizar.'

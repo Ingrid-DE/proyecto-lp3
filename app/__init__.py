@@ -13,6 +13,7 @@ from app.rutas.referenciales.turno.turno_routes import turmod
 from app.rutas.referenciales.estado_civil.estado_civil_routes import estmod
 from app.rutas.referenciales.pais.pais_routes import paimod
 from app.rutas.referenciales.enfermedad.enfermedad_routes import enfmod
+from app.rutas.referenciales.tipo_pago.tipo_pago_routes import tipmod
 
 # registrar referenciales
 modulo0 = '/referenciales'
@@ -66,6 +67,11 @@ app.register_blueprint(enfmod, url_prefix=f'{modulo0}/enfermedad')
 
 from app.rutas.referenciales.enfermedad.enfermedad_api import enfapi
 
+modulo0 = '/referenciales'
+app.register_blueprint(tipmod, url_prefix=f'{modulo0}/tipo_pago')
+
+from app.rutas.referenciales.tipo_pago.tipo_pago_api import tipapi
+
 # APIS v1
 version1 = '/api/v1'
 app.register_blueprint(ciuapi, url_prefix=version1)
@@ -87,3 +93,5 @@ app.register_blueprint(estapi, url_prefix=version1)
 app.register_blueprint(paiapi, url_prefix=version1)
 
 app.register_blueprint(enfapi, url_prefix=version1)
+
+app.register_blueprint(tipapi, url_prefix=version1)

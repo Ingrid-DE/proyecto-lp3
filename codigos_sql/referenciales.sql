@@ -43,6 +43,12 @@ CREATE TABLE
 	);
 
 CREATE TABLE
+	enfermedades(
+		id serial PRIMARY KEY
+		, descripcion varchar(60) UNIQUE
+	);
+
+CREATE TABLE
 	turnos(
 		id serial PRIMARY KEY
 		, descripcion varchar(60) UNIQUE

@@ -12,6 +12,7 @@ from app.rutas.referenciales.ocupacion.ocupacion_routes import ocumod
 from app.rutas.referenciales.turno.turno_routes import turmod
 from app.rutas.referenciales.estado_civil.estado_civil_routes import estmod
 from app.rutas.referenciales.pais.pais_routes import paimod
+from app.rutas.referenciales.enfermedad.enfermedad_routes import enfmod
 
 # registrar referenciales
 modulo0 = '/referenciales'
@@ -60,6 +61,11 @@ app.register_blueprint(paimod, url_prefix=f'{modulo0}/pais')
 
 from app.rutas.referenciales.pais.pais_api import paiapi
 
+modulo0 = '/referenciales'
+app.register_blueprint(enfmod, url_prefix=f'{modulo0}/enfermedad')
+
+from app.rutas.referenciales.enfermedad.enfermedad_api import enfapi
+
 # APIS v1
 version1 = '/api/v1'
 app.register_blueprint(ciuapi, url_prefix=version1)
@@ -79,3 +85,5 @@ app.register_blueprint(turapi, url_prefix=version1)
 app.register_blueprint(estapi, url_prefix=version1)
 
 app.register_blueprint(paiapi, url_prefix=version1)
+
+app.register_blueprint(enfapi, url_prefix=version1)

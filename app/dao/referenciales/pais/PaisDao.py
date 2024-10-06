@@ -2,67 +2,65 @@
 from flask import current_app as app
 from app.conexion.Conexion import Conexion
 
-class PersonaDao:
+class PaisDao:
 
-    def getPersonas(self):
+    def getPaises(self):
 
-        personaSQL = """
-        SELECT id, descripcion, apellido, cedula
-        FROM personas
+        paisSQL = """
+        SELECT id, descripcion
+        FROM paises
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(personaSQL)
-            personas = cur.fetchall() # trae datos de la bd
+            cur.execute(paisSQL)
+            paises = cur.fetchall() # trae datos de la bd
 
             # Transformar los datos en una lista de diccionarios
-            return [{'id': persona[0], 'descripcion': persona[1],'apellido': persona[2], 'cedula': persona[3]} for persona in personas]
+            return [{'id': pais[0], 'descripcion': pais[1]} for pais in paises]
 
         except Exception as e:
-            app.logger.error(f"Error al obtener todas las personas: {str(e)}")
+            app.logger.error(f"Error al obtener todas los paises: {str(e)}")
             return []
 
         finally:
             cur.close()
             con.close()
 
-    def getPersonaById(self, id):
+    def getPaisById(self, id):
 
-        personaSQL = """
-        SELECT id, descripcion, apellido, cedula
-        FROM personas WHERE id=%s
+        paisSQL = """
+        SELECT id, descripcion
+        FROM paises WHERE id=%s
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(personaSQL, (id,))
-            personaEncontrada = cur.fetchone() # Obtener una sola fila
-            if personaEncontrada:
+            cur.execute(paisSQL, (id,))
+            paisEncontrada = cur.fetchone() # Obtener una sola fila
+            if paisEncontrada:
                 return {
-                        "id": personaEncontrada[0],
-                        "descripcion": personaEncontrada[1],
-                        "apellido": personaEncontrada[2],
-                        "cedula": personaEncontrada[3],
-                    }  # Retornar los datos de la persona
+                        "id": paisEncontrada[0],
+                        "descripcion": paisEncontrada[1]
+                    }  # Retornar los datos del pais
             else:
-                return None # Retornar None si no se encuentra la persona
+                return None # Retornar None si no se encuentra el pais
         except Exception as e:
-            app.logger.error(f"Error al obtener persona: {str(e)}")
+            app.logger.error(f"Error al obtener pais: {str(e)}")
             return None
 
         finally:
             cur.close()
             con.close()
 
-    def guardarPersona(self, descripcion, apellido, cedula):
+    def guardarPais(self, descripcion):
 
-        insertPersonaSQL = """
-   INSERT INTO personas( id, descripcion, apellido, cedula) VALUES(%s, %s, %s, %s) RETURNING id        
+        insertPaisSQL = """
+   INSERT INTO paises(descripcion) VALUES(%s) RETURNING id        
    """
 
         conexion = Conexion()
@@ -71,14 +69,14 @@ class PersonaDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(insertPersonaSQL, (descripcion, apellido, cedula))
-            persona_id = cur.fetchone()[0]
+            cur.execute(insertPaisSQL, (descripcion,))
+            pais_id = cur.fetchone()[0]
             con.commit() # se confirma la insercion
-            return persona_id
+            return pais_id
         
         # Si algo fallo entra aqui
         except Exception as e:
-            app.logger.error(f"Error al insertar persona: {str(e)}")
+            app.logger.error(f"Error al insertar pais: {str(e)}")
             con.rollback() # retroceder si hubo error
             return False
 
@@ -87,14 +85,11 @@ class PersonaDao:
             cur.close()
             con.close()
 
-    def updatePersona(self, id, descripcion, apellido, cedula):
+    def updatePais(self, id, descripcion):
 
-        updatePersonaSQL = """
-        UPDATE personas
+        updatePaisSQL = """
+        UPDATE paises
         SET descripcion=%s
-        SET apellido=%s
-        SET cedula=%s
-        
         WHERE id=%s
         """
 
@@ -103,14 +98,14 @@ class PersonaDao:
         cur = con.cursor()
 
         try:
-            cur.execute(updatePersonaSQL, (cedula,apellido,descripcion, id))
+            cur.execute(updatePaisSQL, (descripcion, id,))
             filas_afectadas = cur.rowcount # Obtener el número de filas afectadas            con.commit()
             con.commit()
         
             return filas_afectadas > 0 # Retornar True si se actualizó al menos una fila
 
         except Exception as e:
-            app.logger.error(f"Error al actualizar persona: {str(e)}")
+            app.logger.error(f"Error al actualizar pais: {str(e)}")
             con.rollback()
             return False 
                
@@ -118,10 +113,10 @@ class PersonaDao:
             cur.close()
             con.close()
 
-    def deletePersona(self, id):
+    def deletePais(self, id):
 
-        updatePersonaSQL = """
-        DELETE FROM personas
+        updatePaisSQL = """
+        DELETE FROM paises
         WHERE id=%s
         """
 
@@ -131,13 +126,13 @@ class PersonaDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(updatePersonaSQL, (id,))
+            cur.execute(updatePaisSQL, (id,))
             rows_affected = cur.rowcount
             con.commit()
 
             return rows_affected > 0  # Retornar True si se eliminó al menos una fila        
         except Exception as e:
-            app.logger.error(f"Error al eliminar persona: {str(e)}")
+            app.logger.error(f"Error al eliminar ocupacion: {str(e)}")
             con.rollback()
             return False
 

@@ -119,7 +119,7 @@ Ocupaciones
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "La ocupacion ha sido actualizada correctamente.", "success");
+            Swal.fire("Actualizado", "La ocupacion ha sido actualizado correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }
@@ -139,7 +139,7 @@ Ocupaciones
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "La ocupacion ha sido agregada correctamente.", "success");
+            Swal.fire("Actualizado", "La ocupacion ha sido agregado correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }

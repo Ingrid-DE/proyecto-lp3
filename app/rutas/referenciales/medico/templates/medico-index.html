@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
 {% block titulo %}
-Medicos
+Médicos
 {% endblock %}
 
 {% block contenido %}
 <div class="container mt-4">
-    <h3>Listar Medicos</h3>
+    <h3>Listar Médicos</h3>
 
     <!-- tarjeta -->
     <div class="card">
@@ -17,7 +17,7 @@ Medicos
         <table class="table table-striped" id="tbl">
           <thead>
             <tr>
-              <th>Medicos:</th>
+              <th>Médicos:</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -42,8 +42,8 @@ Medicos
       <!-- Modal body -->
       <div class="modal-body">
         <div class="form-group">
-          <input type="hidden" id="txtIdDescripción">
-          <label for="txtDescripcion">Nombre del medico:</label>
+          <input type="hidden" id="txtIdMedico">
+          <label for="txtDescripcion">Nombre del médico:</label>
           <input type="text" class="form-control" placeholder="Ingrese el nombre del médico" id="txtDescripcion">
         </div>
       </div>
@@ -92,7 +92,7 @@ Medicos
   const agregar = () => {
     $('#btnAgregar').on('click', function(){
       // Setear un título a modal
-      $('#modalTitle').text("Agregar un medico");
+      $('#modalTitle').text("Agregar datos del medico");
       // inicia ventana modal
       $('#txtIdaMedico').val("");
       $('#txtDescripcion').val("");
@@ -118,13 +118,13 @@ Medicos
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "El personal medico ha sido actualizado correctamente.", "success");
+            Swal.fire("Actualizado", "El personal médico ha sido actualizado correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }
         }).catch(err => {
           console.error(err);
-          Swal.fire("Error", "Ocurrió un error al actualizar el personal medico.", "error");
+          Swal.fire("Error", "Ocurrió un error al actualizar el personal médico.", "error");
         });
       } else {
         // insert
@@ -138,13 +138,13 @@ Medicos
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "El personal medico sido agregada correctamente.", "success");
+            Swal.fire("Actualizado", "El personal médico a sido agregado correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }
         }).catch(err => {
           console.error(err);
-          Swal.fire("Error", "Ocurrió un error al guardar el personal medico.", "error");
+          Swal.fire("Error", "Ocurrió un error al guardar el personal médico.", "error");
         });
       }
       $('#txtDescripcion').val("");
@@ -163,7 +163,7 @@ Medicos
       }).then((result) => {
         if (result.isConfirmed) {
           //Swal.fire("Saved!", "", "success");
-          $('#modalTitle').text("Editar una Medico");
+          $('#modalTitle').text("Editar una Médico");
 
           const idMedico = $(this).data('id');
           $('#txtIdMedico').val(idMedico);

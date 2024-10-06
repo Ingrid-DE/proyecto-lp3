@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block titulo %}
-Personas
+  Datos perdonales
 {% endblock %}
 
 {% block contenido %}
@@ -49,7 +49,7 @@ Personas
           <input type="text" class="form-control" placeholder="Ingrese su nombre" id="txtDescripcion">
           <label for="txtApellido">Apellido:</label>
           <input type="text" class="form-control" placeholder="Ingrese su apellido" id="txtApellido">
-          <label for="txtCedula">N° de Cédula:</label>
+          <label for="txtCedula">Cédula:</label>
           <input type="text" class="form-control" placeholder="Ingrese su n° de cédula" id="txtCedula">
        </div>
       </div> 
@@ -101,7 +101,7 @@ Personas
   const agregar = () => {
     $('#btnAgregar').on('click', function(){
       // Setear un título a modal
-      $('#modalTitle').text("Agrega tus datos aquí");
+      $('#modalTitle').text("agrega tus datos personales");
       // inicia ventana modal
       $('#txtIdPersona').val("");
       $('#txtDescripcion').val("");
@@ -131,7 +131,7 @@ Personas
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "Tus datos a sido guardado correctamente.", "success");
+            Swal.fire("Actualizado", "los datos de la persona a sido guardado correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }
@@ -151,7 +151,7 @@ Personas
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "Tus datos a sido guardado correctamente.", "success");
+            Swal.fire("Actualizado", "Los datos de la persona a sido guardado correctamente.", "success");
           } else {
             Swal.fire(data.err);
           }

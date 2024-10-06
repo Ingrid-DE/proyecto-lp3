@@ -94,7 +94,7 @@ Pacientes
       // Setear un título a modal
       $('#modalTitle').text("Agrege datos del paciente");
       // inicia ventana modal
-      $('#txtIdCiudad').val("");
+      $('#txtIdPaciente').val("");
       $('#txtDescripcion').val("");
       $('#modalFormulario').modal();
     });
@@ -102,7 +102,7 @@ Pacientes
 
   const guardar = () => {
     $('#btnGuardar').on('click', function() {
-      const idPaciente = $('#txtIdCiudad').val();
+      const idPaciente = $('#txtIdPaciente').val();
       const nuevaDescripcion = $('#txtDescripcion').val();
       const tabla = $('#tbl').DataTable();
 
@@ -118,13 +118,13 @@ Pacientes
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "El paciente ha sido actualizada correctamente.", "success");
+            Swal.fire("Actualizado", "El paciente ha sido actualizado correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }
         }).catch(err => {
           console.error(err);
-          Swal.fire("Error", "Ocurrió un error al actualizar la ciudad.", "error");
+          Swal.fire("Error", "Ocurrió un error al actualizar el paciente.", "error");
         });
       } else {
         // insert
@@ -138,7 +138,7 @@ Pacientes
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "El paciente a sido agregada correctamente.", "success");
+            Swal.fire("Actualizado", "El paciente a sido agregado correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }
@@ -163,10 +163,10 @@ Pacientes
       }).then((result) => {
         if (result.isConfirmed) {
           //Swal.fire("Saved!", "", "success");
-          $('#modalTitle').text("Editar una Ciudad");
+          $('#modalTitle').text("Editar un paciente");
 
           const idPaciente = $(this).data('id');
-          $('#txtIdCiudad').val(idPaciente);
+          $('#txtIdPaciente').val(idPaciente);
 
           // Necesitamos obtener la descripción del backend
           fetch(`/api/v1/pacientes/${idPaciente}`, {
@@ -214,7 +214,7 @@ Pacientes
               Swal.fire(data.error);
             }
           }).catch(err => {
-            Swal.fire("Error", "Ocurrió un error al eliminar la ciudad.", "error");
+            Swal.fire("Error", "Ocurrió un error al eliminar el paciente.", "error");
           });
         }
       });

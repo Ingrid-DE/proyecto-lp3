@@ -118,7 +118,7 @@ Servicios
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "La ciudad ha sido actualizada correctamente.", "success");
+            Swal.fire("Actualizado", "El servicio ha sido actualizado correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }
@@ -138,7 +138,7 @@ Servicios
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "El Servicio ha sido agregada correctamente.", "success");
+            Swal.fire("Actualizado", "El Servicio ha sido agregado correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }

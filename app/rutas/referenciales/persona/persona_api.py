@@ -9,7 +9,7 @@ def getPersonas():
     perdao = PersonaDao()
 
     try:
-        personas = perdao.getPersona()
+        personas = perdao.getPersonas()
 
         return jsonify({
             'success': True,
@@ -112,7 +112,7 @@ def updatePersona(persona_id):
         if perdao.updatePersona(persona_id, descripcion.upper, apellido.upper, cedula.upper()):
             return jsonify({
                 'success': True,
-                'data': {'id': persona_id, 'descripcion': descripcion, 'apellido': apellido,'cedula': cedula },
+                'data': {'id': persona_id, 'descripcion': descripcion, 'apellido': apellido,'cedula': cedula},
                 'error': None
             }), 200
         else:
@@ -136,7 +136,7 @@ def deletePersona(persona_id):
         if perdao.deletePersona(persona_id):
             return jsonify({
                 'success': True,
-                'mensaje': f'Persona con ID {persona_id} eliminada correctamente.',
+                'mensaje': f'persona con ID {persona_id} eliminada correctamente.',
                 'error': None
             }), 200
         else:

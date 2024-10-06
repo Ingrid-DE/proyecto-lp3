@@ -5,11 +5,29 @@ CREATE TABLE
 	);
 
 CREATE TABLE
+	Paises(
+		id serial PRIMARY KEY
+		, descripcion varchar(60) UNIQUE
+	);
+
+CREATE TABLE
 	personas(
 		id serial PRIMARY KEY,
 		descripcion varchar(60) UNIQUE,
 		apellido varchar(50),
 		cedula TEXT NOT NULL
+	); 
+
+CREATE TABLE
+	estado_civiles(
+		id serial PRIMARY KEY
+		, descripcion varchar(60) UNIQUE
+	);
+ 
+CREATE TABLE
+	ocupaciones(
+		id serial PRIMARY KEY
+		, descripcion varchar(60) UNIQUE
 	);
 
 CREATE TABLE
@@ -25,16 +43,15 @@ CREATE TABLE
 	);
 
 CREATE TABLE
-	servicios(
+	turnos(
 		id serial PRIMARY KEY
 		, descripcion varchar(60) UNIQUE
 	);
 
 CREATE TABLE
-	ocupaciones(
+	servicios(
 		id serial PRIMARY KEY
 		, descripcion varchar(60) UNIQUE
 	);
-
 
 

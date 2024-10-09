@@ -14,6 +14,10 @@ from app.rutas.referenciales.estado_civil.estado_civil_routes import estmod
 from app.rutas.referenciales.pais.pais_routes import paimod
 from app.rutas.referenciales.enfermedad.enfermedad_routes import enfmod
 from app.rutas.referenciales.tipo_pago.tipo_pago_routes import tipmod
+from app.rutas.referenciales.genero.genero_routes import genmod
+from app.rutas.referenciales.dia.dia_routes import diamod
+from app.rutas.referenciales.hora.hora_routes import hormod
+from app.rutas.referenciales.departamento.departamento_routes import deptmod
 
 # registrar referenciales
 modulo0 = '/referenciales'
@@ -72,6 +76,26 @@ app.register_blueprint(tipmod, url_prefix=f'{modulo0}/tipo_pago')
 
 from app.rutas.referenciales.tipo_pago.tipo_pago_api import tipapi
 
+modulo0 = '/referenciales'
+app.register_blueprint(genmod, url_prefix=f'{modulo0}/genero')
+
+from app.rutas.referenciales.genero.genero_api import genapi
+
+modulo0 = '/referenciales'
+app.register_blueprint(diamod, url_prefix=f'{modulo0}/dia')
+
+from app.rutas.referenciales.dia.dia_api import diaapi
+
+modulo0 = '/referenciales'
+app.register_blueprint(hormod, url_prefix=f'{modulo0}/hora')
+
+from app.rutas.referenciales.hora.hora_api import horapi
+
+modulo0 = '/referenciales'
+app.register_blueprint(deptmod, url_prefix=f'{modulo0}/departamento')
+
+from app.rutas.referenciales.departamento.departamento_api import deptapi
+
 # APIS v1
 version1 = '/api/v1'
 app.register_blueprint(ciuapi, url_prefix=version1)
@@ -95,3 +119,11 @@ app.register_blueprint(paiapi, url_prefix=version1)
 app.register_blueprint(enfapi, url_prefix=version1)
 
 app.register_blueprint(tipapi, url_prefix=version1)
+
+app.register_blueprint(genapi, url_prefix=version1)
+
+app.register_blueprint(diaapi, url_prefix=version1)
+
+app.register_blueprint(horapi, url_prefix=version1)
+
+app.register_blueprint(deptapi, url_prefix=version1)

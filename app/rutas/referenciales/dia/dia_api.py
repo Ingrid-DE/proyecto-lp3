@@ -1,64 +1,63 @@
 from flask import Blueprint, request, jsonify, current_app as app
-from app.dao.referenciales.persona.PersonaDao import PersonaDao
+from app.dao.referenciales.dia.DiaDao import DiaDao
 
-perapi = Blueprint('perapi', __name__)
+diaapi = Blueprint('diaapi', __name__)
 
-# Trae todas las personas
-@perapi.route('/personas', methods=['GET'])
-def getPersonas():
-    personadao = PersonaDao()
+# Trae todas las ciudades
+@diaapi.route('/dias', methods=['GET'])
+def getDias():
+    diadao = DiaDao()
 
     try:
-        personas = personadao.getPersonas()
+        dias = diadao.getDia()
 
         return jsonify({
             'success': True,
-            'data': personas,
+            'data': dias,
             'error': None
         }), 200
 
     except Exception as e:
-        app.logger.error(f"Error al obtener todas las personas: {str(e)}")
+        app.logger.error(f"Error al obtener todos los días: {str(e)}")
         return jsonify({
             'success': False,
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
-    
 
-@perapi.route('/personas/<int:persona_id>', methods=['GET'])
-def getPersona(persona_id):
-    personadao = PersonaDao()
+@diaapi.route('/dias/<int:dia_id>', methods=['GET'])
+def getDia(dia_id):
+    diadao = DiaDao()
 
     try:
-        persona = personadao.getPersonaById(persona_id)
+        dia = diadao.getDiaById(dia_id)
 
-        if persona:
+        if dia:
             return jsonify({
                 'success': True,
-                'data': persona,
+                'data': dia,
                 'error': None
             }), 200
         else:
             return jsonify({
                 'success': False,
-                'error': 'No se encontró la persona con el ID proporcionado.'
+                'error': 'No se encontró el dia con el ID proporcionado.'
             }), 404
 
     except Exception as e:
-        app.logger.error(f"Error al obtener persona: {str(e)}")
+        app.logger.error(f"Error al obtener dias: {str(e)}")
         return jsonify({
             'success': False,
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
-    
 
-# Agrega una nueva persona
-@perapi.route('/personas', methods=['POST'])
-def addPersona():
+# Agrega una nueva ciudad
+@diaapi.route('/dias', methods=['POST'])
+def addDia():
     data = request.get_json()
-    personadao = PersonaDao()
+    diadao = DiaDao()
 
-    campos_requeridos = ['descripcion', 'apellido', 'cedula']
+    # Validar que el JSON no esté vacío y tenga las propiedades necesarias
+    campos_requeridos = ['descripcion']
 
     # Verificar si faltan campos o son vacíos
     for campo in campos_requeridos:
@@ -69,33 +68,30 @@ def addPersona():
                             }), 400
 
     try:
-        descripcion = data['descripcion']
-        apellido = data['apellido']
-        cedula = data['cedula']
-        persona_id = personadao.guardarPersona(descripcion, apellido, cedula)
-
-        if persona_id is not None:
+        descripcion = data['descripcion'].upper()
+        dia_id = diadao.guardarDia(descripcion)
+        if dia_id is not None:
             return jsonify({
                 'success': True,
-                'data': {'id': persona_id, 'descripcion': descripcion, 'apellido': apellido, 'cedula': cedula},
+                'data': {'id': dia_id, 'descripcion': descripcion},
                 'error': None
             }), 201
         else:
-            return jsonify({ 'success': False, 'error': 'No se pudo guardar la persona. Consulte con el administrador.' }), 500
+            return jsonify({ 'success': False, 'error': 'No se pudo guardar el día. Consulte con el administrador.' }), 500
     except Exception as e:
-        app.logger.error(f"Error al agregar persona: {str(e)}")
+        app.logger.error(f"Error al agregar día: {str(e)}")
         return jsonify({
             'success': False,
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
 
-@perapi.route('/personas/<int:persona_id>', methods=['PUT'])
-def updatePersona(persona_id):
+@diaapi.route('/dias/<int:dia_id>', methods=['PUT'])
+def updateDia(dia_id):
     data = request.get_json()
-    personadao = PersonaDao()
+    diadao = DiaDao()
 
     # Validar que el JSON no esté vacío y tenga las propiedades necesarias
-    campos_requeridos = ['descripcion', 'apellido', 'cedula']
+    campos_requeridos = ['descripcion']
 
     # Verificar si faltan campos o son vacíos
     for campo in campos_requeridos:
@@ -104,50 +100,46 @@ def updatePersona(persona_id):
                             'success': False,
                             'error': f'El campo {campo} es obligatorio y no puede estar vacío.'
                             }), 400
-        
-    try:    
-        descripcion = data['descripcion']
-        apellido = data['apellido']
-        cedula = data['cedula']
-
-        if personadao.updatePersona(persona_id, descripcion, apellido, cedula):
+    descripcion = data['descripcion']
+    try:
+        if diadao.updateDia(dia_id, descripcion.upper()):
             return jsonify({
                 'success': True,
-                'data': {'id': persona_id, 'descripcion': descripcion, 'apellido': apellido, 'cedula': cedula},
+                'data': {'id':dia_id, 'descripcion': descripcion},
                 'error': None
             }), 200
         else:
             return jsonify({
                 'success': False,
-                'error': 'No se encontró la persona con el ID proporcionado o no se pudo actualizar.'
+                'error': 'No se encontró al día con el ID proporcionado o no se pudo actualizar.'
             }), 404
-        
     except Exception as e:
-        app.logger.error(f"Error al actualizar persona: {str(e)}")
+        app.logger.error(f"Error al actualizar día: {str(e)}")
         return jsonify({
             'success': False,
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
 
-@perapi.route('/personas/<int:persona_id>', methods=['DELETE'])
-def deletePersona(persona_id):
-    personadao = PersonaDao()
+@diaapi.route('/dias/<int:dia_id>', methods=['DELETE'])
+def deleteDia(dia_id):
+    diadao = DiaDao()
 
     try:
-        if personadao.deletePersona(persona_id):
+        # Usar el retorno de eliminarCiudad para determinar el éxito
+        if diadao.deleteDia(dia_id):
             return jsonify({
                 'success': True,
-                'mensaje': f'Persona con ID {persona_id} eliminada correctamente.',
+                'mensaje': f'dia con ID {dia_id} eliminada correctamente.',
                 'error': None
             }), 200
         else:
             return jsonify({
                 'success': False,
-                'error': 'No se encontró la persona con el ID proporcionado o no se pudo eliminar.'
+                'error': 'No se encontró al día con el ID proporcionado o no se pudo eliminar.'
             }), 404
 
     except Exception as e:
-        app.logger.error(f"Error al eliminar persona: {str(e)}")
+        app.logger.error(f"Error al eliminar día: {str(e)}")
         return jsonify({
             'success': False,
             'error': 'Ocurrió un error interno. Consulte con el administrador.'

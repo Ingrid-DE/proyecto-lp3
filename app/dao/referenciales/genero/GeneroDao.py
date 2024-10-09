@@ -2,65 +2,65 @@
 from flask import current_app as app
 from app.conexion.Conexion import Conexion
 
-class ServicioDao:
+class GeneroDao:
 
-    def getServicios(self):
+    def getGeneros(self):
 
-        servicioSQL = """
+        generoSQL = """
         SELECT id, descripcion
-        FROM servicios
+        FROM generos
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(servicioSQL)
-            servicios = cur.fetchall() # trae datos de la bd
+            cur.execute(generoSQL)
+            generos = cur.fetchall() # trae datos de la bd
 
             # Transformar los datos en una lista de diccionarios
-            return [{'id': servicio[0], 'descripcion': servicio[1]} for servicio in servicios]
+            return [{'id': genero[0], 'descripcion': genero[1]} for genero in generos]
 
         except Exception as e:
-            app.logger.error(f"Error al obtener todos los  servicios: {str(e)}")
+            app.logger.error(f"Error al obtener todos los  generos: {str(e)}")
             return []
 
         finally:
             cur.close()
             con.close()
 
-    def getServicioById(self, id):
+    def getGeneroById(self, id):
 
-        servicioSQL = """
+        generoSQL = """
         SELECT id, descripcion
-        FROM servicios WHERE id=%s
+        FROM generos WHERE id=%s
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(servicioSQL, (id,))
-            servicioEncontrada = cur.fetchone() # Obtener una sola fila
-            if servicioEncontrada:
+            cur.execute(generoSQL, (id,))
+            generoEncontrada = cur.fetchone() # Obtener una sola fila
+            if generoEncontrada:
                 return {
-                        "id": servicioEncontrada[0],
-                        "descripcion": servicioEncontrada[1]
+                        "id": generoEncontrada[0],
+                        "descripcion": generoEncontrada[1]
                     }  # Retornar los datos de la ciudad
             else:
                 return None # Retornar None si no se encuentra la ciudad
         except Exception as e:
-            app.logger.error(f"Error al obtener servicio: {str(e)}")
+            app.logger.error(f"Error al obtener genero: {str(e)}")
             return None
 
         finally:
             cur.close()
             con.close()
 
-    def guardarServicio(self, descripcion):
+    def guardarGenero(self, descripcion):
 
-        insertServicioSQL = """
-   INSERT INTO servicios(descripcion) VALUES(%s) RETURNING id        
+        insertGeneroSQL = """
+   INSERT INTO generos(descripcion) VALUES(%s) RETURNING id        
    """
 
         conexion = Conexion()
@@ -69,14 +69,14 @@ class ServicioDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(insertServicioSQL, (descripcion,))
-            servicio_id = cur.fetchone()[0]
+            cur.execute(insertGeneroSQL, (descripcion,))
+            genero_id = cur.fetchone()[0]
             con.commit() # se confirma la insercion
-            return servicio_id
+            return genero_id
         
         # Si algo fallo entra aqui
         except Exception as e:
-            app.logger.error(f"Error al insertar servicio: {str(e)}")
+            app.logger.error(f"Error al insertar genero: {str(e)}")
             con.rollback() # retroceder si hubo error
             return False
 
@@ -85,10 +85,10 @@ class ServicioDao:
             cur.close()
             con.close()
 
-    def updateServicio(self, id, descripcion):
+    def updateGenero(self, id, descripcion):
 
-        updateServicioSQL = """
-        UPDATE servicios
+        updateGeneroSQL = """
+        UPDATE generos
         SET descripcion=%s
         WHERE id=%s
         """
@@ -98,14 +98,14 @@ class ServicioDao:
         cur = con.cursor()
 
         try:
-            cur.execute(updateServicioSQL, (descripcion, id,))
+            cur.execute(updateGeneroSQL, (descripcion, id,))
             filas_afectadas = cur.rowcount # Obtener el número de filas afectadas            con.commit()
             con.commit()
         
             return filas_afectadas > 0 # Retornar True si se actualizó al menos una fila
 
         except Exception as e:
-            app.logger.error(f"Error al actualizar servicio: {str(e)}")
+            app.logger.error(f"Error al actualizar genero: {str(e)}")
             con.rollback()
             return False 
                
@@ -113,10 +113,10 @@ class ServicioDao:
             cur.close()
             con.close()
 
-    def deleteServicio(self, id):
+    def deleteGenero(self, id):
 
-        updateServicioSQL = """
-        DELETE FROM servicios
+        updateGeneroSQL = """
+        DELETE FROM generos
         WHERE id=%s
         """
 
@@ -126,13 +126,13 @@ class ServicioDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(updateServicioSQL, (id,))
+            cur.execute(updateGeneroSQL, (id,))
             rows_affected = cur.rowcount
             con.commit()
 
             return rows_affected > 0  # Retornar True si se eliminó al menos una fila        
         except Exception as e:
-            app.logger.error(f"Error al eliminar Servicio: {str(e)}")
+            app.logger.error(f"Error al eliminar genero: {str(e)}")
             con.rollback()
             return False
 

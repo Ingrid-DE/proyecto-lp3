@@ -5,7 +5,7 @@ CREATE TABLE
 	);
 
 CREATE TABLE
-	Paises(
+	paises(
 		id serial PRIMARY KEY
 		, descripcion varchar(60) UNIQUE
 	);
@@ -13,10 +13,16 @@ CREATE TABLE
 CREATE TABLE
 	personas(
 		id serial PRIMARY KEY,
-		descripcion varchar(60) UNIQUE,
-		apellido varchar(50),
-		cedula TEXT NOT NULL
+		descripcion varchar(100) UNIQUE,
+		apellido varchar(100),
+		cedula TEXT NOT NULL	
 	); 
+
+CREATE TABLE
+	generos(
+		id serial PRIMARY KEY
+		, descripcion varchar(60) UNIQUE
+	);
 
 CREATE TABLE
 	estado_civiles(
@@ -49,6 +55,18 @@ CREATE TABLE
 	);
 
 CREATE TABLE
+	dias(
+		id serial PRIMARY KEY
+		, descripcion varchar(60) UNIQUE
+	);	
+
+CREATE TABLE
+	horas(
+		id serial PRIMARY KEY
+		, descripcion varchar(60) UNIQUE
+	);		
+
+CREATE TABLE
 	turnos(
 		id serial PRIMARY KEY
 		, descripcion varchar(60) UNIQUE
@@ -66,3 +84,8 @@ CREATE TABLE
 		, descripcion varchar(60) UNIQUE
 	);
 
+CREATE TABLE
+	departamentos(
+		id serial PRIMARY KEY
+		, descripcion varchar(60) UNIQUE
+	);

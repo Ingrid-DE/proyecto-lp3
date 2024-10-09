@@ -2,65 +2,65 @@
 from flask import current_app as app
 from app.conexion.Conexion import Conexion
 
-class ServicioDao:
+class DiaDao:
 
-    def getServicios(self):
+    def getDia(self):
 
-        servicioSQL = """
+        diaSQL = """
         SELECT id, descripcion
-        FROM servicios
+        FROM dias
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(servicioSQL)
-            servicios = cur.fetchall() # trae datos de la bd
+            cur.execute(diaSQL)
+            dias = cur.fetchall() # trae datos de la bd
 
             # Transformar los datos en una lista de diccionarios
-            return [{'id': servicio[0], 'descripcion': servicio[1]} for servicio in servicios]
+            return [{'id': dia[0], 'descripcion': dia[1]} for dia in dias]
 
         except Exception as e:
-            app.logger.error(f"Error al obtener todos los  servicios: {str(e)}")
+            app.logger.error(f"Error al obtener todos los días: {str(e)}")
             return []
 
         finally:
             cur.close()
             con.close()
 
-    def getServicioById(self, id):
+    def getDiaById(self, id):
 
-        servicioSQL = """
+        diaSQL = """
         SELECT id, descripcion
-        FROM servicios WHERE id=%s
+        FROM dias WHERE id=%s
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(servicioSQL, (id,))
-            servicioEncontrada = cur.fetchone() # Obtener una sola fila
-            if servicioEncontrada:
+            cur.execute(diaSQL, (id,))
+            diaEncontrada = cur.fetchone() # Obtener una sola fila
+            if diaEncontrada:
                 return {
-                        "id": servicioEncontrada[0],
-                        "descripcion": servicioEncontrada[1]
-                    }  # Retornar los datos de la ciudad
+                        "id": diaEncontrada[0],
+                        "descripcion": diaEncontrada[1]
+                    }  # Retornar los datos de la medico
             else:
-                return None # Retornar None si no se encuentra la ciudad
+                return None # Retornar None si no se encuentra la medico
         except Exception as e:
-            app.logger.error(f"Error al obtener servicio: {str(e)}")
+            app.logger.error(f"Error al obtener días: {str(e)}")
             return None
 
         finally:
             cur.close()
             con.close()
 
-    def guardarServicio(self, descripcion):
+    def guardarDia(self, descripcion):
 
-        insertServicioSQL = """
-   INSERT INTO servicios(descripcion) VALUES(%s) RETURNING id        
+        insertDiaSQL = """
+   INSERT INTO dias(descripcion) VALUES(%s) RETURNING id        
    """
 
         conexion = Conexion()
@@ -69,14 +69,14 @@ class ServicioDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(insertServicioSQL, (descripcion,))
-            servicio_id = cur.fetchone()[0]
+            cur.execute(insertDiaSQL, (descripcion,))
+            dia_id = cur.fetchone()[0]
             con.commit() # se confirma la insercion
-            return servicio_id
+            return dia_id
         
         # Si algo fallo entra aqui
         except Exception as e:
-            app.logger.error(f"Error al insertar servicio: {str(e)}")
+            app.logger.error(f"Error al insertar dia: {str(e)}")
             con.rollback() # retroceder si hubo error
             return False
 
@@ -85,10 +85,10 @@ class ServicioDao:
             cur.close()
             con.close()
 
-    def updateServicio(self, id, descripcion):
+    def updateDia(self, id, descripcion):
 
-        updateServicioSQL = """
-        UPDATE servicios
+        updateDiaSQL = """
+        UPDATE dias
         SET descripcion=%s
         WHERE id=%s
         """
@@ -98,14 +98,14 @@ class ServicioDao:
         cur = con.cursor()
 
         try:
-            cur.execute(updateServicioSQL, (descripcion, id,))
+            cur.execute(updateDiaSQL, (descripcion, id,))
             filas_afectadas = cur.rowcount # Obtener el número de filas afectadas            con.commit()
             con.commit()
         
             return filas_afectadas > 0 # Retornar True si se actualizó al menos una fila
 
         except Exception as e:
-            app.logger.error(f"Error al actualizar servicio: {str(e)}")
+            app.logger.error(f"Error al actualizar dia: {str(e)}")
             con.rollback()
             return False 
                
@@ -113,10 +113,10 @@ class ServicioDao:
             cur.close()
             con.close()
 
-    def deleteServicio(self, id):
+    def deleteDia(self, id):
 
-        updateServicioSQL = """
-        DELETE FROM servicios
+        updateDiaSQL = """
+        DELETE FROM dias
         WHERE id=%s
         """
 
@@ -126,13 +126,13 @@ class ServicioDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(updateServicioSQL, (id,))
+            cur.execute(updateDiaSQL, (id,))
             rows_affected = cur.rowcount
             con.commit()
 
             return rows_affected > 0  # Retornar True si se eliminó al menos una fila        
         except Exception as e:
-            app.logger.error(f"Error al eliminar Servicio: {str(e)}")
+            app.logger.error(f"Error al eliminar dia: {str(e)}")
             con.rollback()
             return False
 

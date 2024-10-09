@@ -2,65 +2,65 @@
 from flask import current_app as app
 from app.conexion.Conexion import Conexion
 
-class ServicioDao:
+class HoraDao:
 
-    def getServicios(self):
+    def getHoras(self):
 
-        servicioSQL = """
+        horaSQL = """
         SELECT id, descripcion
-        FROM servicios
+        FROM horas
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(servicioSQL)
-            servicios = cur.fetchall() # trae datos de la bd
+            cur.execute(horaSQL)
+            horas = cur.fetchall() # trae datos de la bd
 
             # Transformar los datos en una lista de diccionarios
-            return [{'id': servicio[0], 'descripcion': servicio[1]} for servicio in servicios]
+            return [{'id': hora[0], 'descripcion': hora[1]} for hora in horas]
 
         except Exception as e:
-            app.logger.error(f"Error al obtener todos los  servicios: {str(e)}")
+            app.logger.error(f"Error al obtener todos las horas: {str(e)}")
             return []
 
         finally:
             cur.close()
             con.close()
 
-    def getServicioById(self, id):
+    def getHoraById(self, id):
 
-        servicioSQL = """
+        horaSQL = """
         SELECT id, descripcion
-        FROM servicios WHERE id=%s
+        FROM horas WHERE id=%s
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(servicioSQL, (id,))
-            servicioEncontrada = cur.fetchone() # Obtener una sola fila
-            if servicioEncontrada:
+            cur.execute(horaSQL, (id,))
+            horaEncontrada = cur.fetchone() # Obtener una sola fila
+            if horaEncontrada:
                 return {
-                        "id": servicioEncontrada[0],
-                        "descripcion": servicioEncontrada[1]
-                    }  # Retornar los datos de la ciudad
+                        "id": horaEncontrada[0],
+                        "descripcion": horaEncontrada[1]
+                    }  # Retornar los datos de la medico
             else:
-                return None # Retornar None si no se encuentra la ciudad
+                return None # Retornar None si no se encuentra la medico
         except Exception as e:
-            app.logger.error(f"Error al obtener servicio: {str(e)}")
+            app.logger.error(f"Error al obtener horas: {str(e)}")
             return None
 
         finally:
             cur.close()
             con.close()
 
-    def guardarServicio(self, descripcion):
+    def guardarHora(self, descripcion):
 
-        insertServicioSQL = """
-   INSERT INTO servicios(descripcion) VALUES(%s) RETURNING id        
+        insertHoraSQL = """
+   INSERT INTO horas(descripcion) VALUES(%s) RETURNING id        
    """
 
         conexion = Conexion()
@@ -69,14 +69,14 @@ class ServicioDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(insertServicioSQL, (descripcion,))
-            servicio_id = cur.fetchone()[0]
+            cur.execute(insertHoraSQL, (descripcion,))
+            hora_id = cur.fetchone()[0]
             con.commit() # se confirma la insercion
-            return servicio_id
+            return hora_id
         
         # Si algo fallo entra aqui
         except Exception as e:
-            app.logger.error(f"Error al insertar servicio: {str(e)}")
+            app.logger.error(f"Error al insertar hora: {str(e)}")
             con.rollback() # retroceder si hubo error
             return False
 
@@ -85,10 +85,10 @@ class ServicioDao:
             cur.close()
             con.close()
 
-    def updateServicio(self, id, descripcion):
+    def updateHora(self, id, descripcion):
 
-        updateServicioSQL = """
-        UPDATE servicios
+        updateHoraSQL = """
+        UPDATE horas
         SET descripcion=%s
         WHERE id=%s
         """
@@ -98,14 +98,14 @@ class ServicioDao:
         cur = con.cursor()
 
         try:
-            cur.execute(updateServicioSQL, (descripcion, id,))
+            cur.execute(updateHoraSQL, (descripcion, id,))
             filas_afectadas = cur.rowcount # Obtener el número de filas afectadas            con.commit()
             con.commit()
         
             return filas_afectadas > 0 # Retornar True si se actualizó al menos una fila
 
         except Exception as e:
-            app.logger.error(f"Error al actualizar servicio: {str(e)}")
+            app.logger.error(f"Error al actualizar hora: {str(e)}")
             con.rollback()
             return False 
                
@@ -113,10 +113,10 @@ class ServicioDao:
             cur.close()
             con.close()
 
-    def deleteServicio(self, id):
+    def deleteHora(self, id):
 
-        updateServicioSQL = """
-        DELETE FROM servicios
+        updateHoraSQL = """
+        DELETE FROM horas
         WHERE id=%s
         """
 
@@ -126,13 +126,13 @@ class ServicioDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(updateServicioSQL, (id,))
+            cur.execute(updateHoraSQL, (id,))
             rows_affected = cur.rowcount
             con.commit()
 
             return rows_affected > 0  # Retornar True si se eliminó al menos una fila        
         except Exception as e:
-            app.logger.error(f"Error al eliminar Servicio: {str(e)}")
+            app.logger.error(f"Error al eliminar hora: {str(e)}")
             con.rollback()
             return False
 

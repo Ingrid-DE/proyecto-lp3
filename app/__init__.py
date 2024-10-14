@@ -5,7 +5,7 @@ app = Flask(__name__)
 # importar referenciales
 from app.rutas.referenciales.ciudad.ciudad_routes import ciumod 
 from app.rutas.referenciales.persona.persona_routes import persona_mod
-from app.rutas.referenciales.medico.medico_routes import medmod
+from app.rutas.referenciales.medico.medico_routes import medicomod
 from app.rutas.referenciales.paciente.paciente_routes import pacientemod
 from app.rutas.referenciales.servicio.servicio_routes import sermod
 from app.rutas.referenciales.ocupacion.ocupacion_routes import ocumod
@@ -32,9 +32,9 @@ app.register_blueprint(persona_mod, url_prefix=f'{modulo0}/persona')
 from app.rutas.referenciales.persona.persona_api import personaapi
 
 modulo0 = '/referenciales'
-app.register_blueprint(medmod, url_prefix=f'{modulo0}/medico')
+app.register_blueprint(medicomod, url_prefix=f'{modulo0}/medico')
 
-from app.rutas.referenciales.medico.medico_api import medapi
+from app.rutas.referenciales.medico.medico_api import medicoapi
 
 modulo0 = '/referenciales'
 app.register_blueprint(pacientemod, url_prefix=f'{modulo0}/paciente')
@@ -102,7 +102,7 @@ app.register_blueprint(ciuapi, url_prefix=version1)
 
 app.register_blueprint(personaapi, url_prefix=version1)
 
-app.register_blueprint(medapi,url_prefix=version1)
+app.register_blueprint(medicoapi,url_prefix=version1)
 
 app.register_blueprint(pacienteapi, url_prefix=version1)
 

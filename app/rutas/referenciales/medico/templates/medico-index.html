@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block titulo %}
-Médicos
+Medicos
 {% endblock %}
 
 {% block contenido %}
@@ -17,72 +17,76 @@ Médicos
         <table class="table table-striped" id="tbl">
           <thead>
             <tr>
-              <th>Médicos:</th>
+              <th>Nombre:</th>
+              <th>Apellido:</th>
+              <th>Especialidad:</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody></tbody>
-      </table>
+        </table>
       </div>
     </div>
- <!-- /tarjeta -->
+    <!-- /tarjeta -->
 
- <!-- El formulario -->
- <div class="modal" id="modalFormulario">
-  <!-- La clase modal-dialog-centered centra el modal -->
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-    
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h4 class="modal-title" id="modalTitle"></h4>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-      </div>
+    <!-- El formulario -->
+    <div class="modal" id="modalFormulario">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title" id="modalTitle"></h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
 
-      <!-- Modal body -->
-      <div class="modal-body">
-        <div class="form-group">
-          <input type="hidden" id="txtIdMedico">
-          <label for="txtDescripcion">Nombre del médico:</label>
-          <input type="text" class="form-control" placeholder="Ingrese el nombre del médico" id="txtDescripcion">
-        </div>
-      </div>
-
-      <!-- Modal footer -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="btnGuardar">Guardar</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-      </div>
-
-    </div>
-   </div>
- </div>
-    
- <div class="row mt-4 d-none" id="rowAlerta">
-        <div class="col col-md-12">
-            <div class="alert alert-success">
-                <strong>Registro Exitoso!</strong>
-                <div class="row" id="mostrarAlerta"></div>
+          <!-- Modal body -->
+          <div class="modal-body">
+            <div class="form-group">
+              <input type="hidden" id="txtIdMedico">
+              <label for="txtNombre">Nombre:</label>
+              <input type="text" class="form-control" placeholder="Ingrese el nombre" id="txtNombre">
+              <label for="txtApellido">Apellido:</label>
+              <input type="text" class="form-control" placeholder="Ingrese el apellido" id="txtApellido">
+              <label for="txtEspecialidad">Especialidad:</label>
+              <input type="text" class="form-control" placeholder="Ingrese la especialidad" id="txtEspecialidad">
             </div>
+          </div>
+
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="btnGuardar">Guardar</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+          </div>
         </div>
+      </div>
+    </div>
+    
+    <div class="row mt-4 d-none" id="rowAlerta">
+      <div class="col col-md-12">
+        <div class="alert alert-success">
+          <strong>Registro Exitoso!</strong>
+          <div class="row" id="mostrarAlerta"></div>
+        </div>
+      </div>
     </div>
 </div>
 {% endblock %}
 
 {% block js %}
-<script> 
-
+<script>
   const initDatatable = () => {
     $('#tbl').DataTable({
       language: {
         url: "{{ url_for('static', filename='vendor/datatables/es-ES.json') }}",
       },
-      ajax:'/api/v1/medicos',      
+      ajax:'/api/v1/medicos',
       columns: [
-        { data: 'descripcion' },
+        { data: 'nombre' },
+        { data: 'apellido' },
+        { data: 'especialidad' },
         { data: function(row) {
             return `<button type="button" name="btn_editar" class="btn btn-primary" data-id="${row.id}">Editar</button>
-                    <button type="button" name="btn_eliminar" class="btn btn-danger" data-id="${row.id}">Eliminar</button>`
+                    <button type="button" name="btn_eliminar" class="btn btn-danger" data-id="${row.id}">Eliminar</button>`;
           }
         }
       ]
@@ -91,11 +95,11 @@ Médicos
 
   const agregar = () => {
     $('#btnAgregar').on('click', function(){
-      // Setear un título a modal
-      $('#modalTitle').text("Agregar datos del medico");
-      // inicia ventana modal
-      $('#txtIdaMedico').val("");
-      $('#txtDescripcion').val("");
+      $('#modalTitle').text("Agregar Médico");
+      $('#txtIdMedico').val("");
+      $('#txtNombre').val("");
+      $('#txtApellido').val("");
+      $('#txtEspecialidad').val("");
       $('#modalFormulario').modal();
     });
   }
@@ -103,7 +107,9 @@ Médicos
   const guardar = () => {
     $('#btnGuardar').on('click', function() {
       const idMedico = $('#txtIdMedico').val();
-      const nuevaDescripcion = $('#txtDescripcion').val();
+      const nuevoNombre = $('#txtNombre').val();
+      const nuevoApellido = $('#txtApellido').val();
+      const nuevaEspecialidad = $('#txtEspecialidad').val();
       const tabla = $('#tbl').DataTable();
 
       if(idMedico) {
@@ -112,19 +118,19 @@ Médicos
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
-          }, body: JSON.stringify({ descripcion: nuevaDescripcion})
+          }, body: JSON.stringify({ nombre: nuevoNombre, apellido: nuevoApellido, especialidad: nuevaEspecialidad })
         })
         .then(resp => resp.json())
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "El personal médico ha sido actualizado correctamente.", "success");
+            Swal.fire("Actualizado", "El médico ha sido actualizado correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }
         }).catch(err => {
           console.error(err);
-          Swal.fire("Error", "Ocurrió un error al actualizar el personal médico.", "error");
+          Swal.fire("Error", "Ocurrió un error al actualizar el médico.", "error");
         });
       } else {
         // insert
@@ -132,29 +138,27 @@ Médicos
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
-          }, body: JSON.stringify({ descripcion: nuevaDescripcion})
+          }, body: JSON.stringify({ nombre: nuevoNombre, apellido: nuevoApellido, especialidad: nuevaEspecialidad })
         })
         .then(resp => resp.json())
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "El personal médico a sido agregado correctamente.", "success");
+            Swal.fire("Agregado", "El médico ha sido agregado correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }
         }).catch(err => {
           console.error(err);
-          Swal.fire("Error", "Ocurrió un error al guardar el personal médico.", "error");
+          Swal.fire("Error", "Ocurrió un error al guardar el médico.", "error");
         });
       }
-      $('#txtDescripcion').val("");
       $('#modalFormulario').modal("hide");
     });
   }
 
   const editar = () => {
     $('#tbl').on('click', 'button[name="btn_editar"]',function(){
-      // Mostrar mensaje de confirmación usando sweetalert
       Swal.fire({
         title: "¿Deseas editar este registro?",
         showCancelButton: true,
@@ -162,13 +166,12 @@ Médicos
         cancelButtonText: `No`
       }).then((result) => {
         if (result.isConfirmed) {
-          //Swal.fire("Saved!", "", "success");
-          $('#modalTitle').text("Editar un personal Médico");
+          $('#modalTitle').text("Editar Médico");
 
           const idMedico = $(this).data('id');
           $('#txtIdMedico').val(idMedico);
 
-          // Necesitamos obtener la descripción del backend
+          // Obtener los datos del medico del backend
           fetch(`/api/v1/medicos/${idMedico}`, {
             method: 'GET',
             headers: {
@@ -177,7 +180,9 @@ Médicos
           })
           .then(resp => resp.json())
           .then(data => {
-            $('#txtDescripcion').val(data.data.descripcion);
+            $('#txtNombre').val(data.data.nombre);
+            $('#txtApellido').val(data.data.apellido);
+            $('#txtEspecialidad').val(data.data.especialidad);
             $('#modalFormulario').modal();
           });
         }
@@ -188,7 +193,6 @@ Médicos
   const eliminar = () => {
     $('#tbl').on('click', 'button[name="btn_eliminar"]',function(){
       const idMedico = $(this).data('id');
-      // Mostrar mensaje de confirmación usando sweetalert
       Swal.fire({
         title: "¿Deseas eliminar este registro?",
         showCancelButton: true,
@@ -205,20 +209,18 @@ Médicos
           .then(resp => resp.json())
           .then(data => {
             if(data && !data.error && data.success) {
-              // Para borrar la fila del datatable(cliente)
               const fila =$(this).closest('tr');
               const tabla = $('#tbl').DataTable();
               tabla.row(fila).remove().draw();
-              Swal.fire("Eliminado", "", data.success);
+              Swal.fire("Eliminado", "El médico ha sido eliminado correctamente.", "success");
             } else {
               Swal.fire(data.error);
             }
           }).catch(err => {
-            Swal.fire("Error", "Ocurrió un error al eliminar al personal médico.", "error");
+            Swal.fire("Error", "Ocurrió un error al eliminar el médico.", "error");
           });
         }
       });
-
     });
   }
 

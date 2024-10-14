@@ -35,11 +35,12 @@ CREATE TABLE
 		, descripcion varchar(60) UNIQUE
 	);
 
-CREATE TABLE
-	medicos(
-		id serial PRIMARY KEY
-		, descripcion varchar(60) UNIQUE
-	);
+CREATE TABLE medicos (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(255),
+    apellido VARCHAR(255),
+    especialidad VARCHAR(50)
+);
 
 CREATE TABLE pacientes (
     id SERIAL PRIMARY KEY,

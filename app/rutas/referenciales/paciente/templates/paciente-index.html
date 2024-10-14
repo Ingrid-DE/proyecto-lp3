@@ -17,72 +17,80 @@ Pacientes
         <table class="table table-striped" id="tbl">
           <thead>
             <tr>
-              <th>Nombre</th>
+              <th>Nombre:</th>
+              <th>Edad:</th>
+              <th>Peso:</th>
+              <th>Altura:</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody></tbody>
-      </table>
+        </table>
       </div>
     </div>
- <!-- /tarjeta -->
+    <!-- /tarjeta -->
 
- <!-- El formulario -->
- <div class="modal" id="modalFormulario">
-  <!-- La clase modal-dialog-centered centra el modal -->
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-    
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h4 class="modal-title" id="modalTitle"></h4>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-      </div>
+    <!-- El formulario -->
+    <div class="modal" id="modalFormulario">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title" id="modalTitle"></h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
 
-      <!-- Modal body -->
-      <div class="modal-body">
-        <div class="form-group">
-          <input type="hidden" id="txtIdPaciente">
-          <label for="txtDescripcion">Nombre:</label>
-          <input type="text" class="form-control" placeholder="Ingrese nombre del paciente" id="txtDescripcion">
-        </div>
-      </div>
-
-      <!-- Modal footer -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="btnGuardar">Guardar</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-      </div>
-
-    </div>
-   </div>
- </div>
-    
- <div class="row mt-4 d-none" id="rowAlerta">
-        <div class="col col-md-12">
-            <div class="alert alert-success">
-                <strong>Registro Exitoso!</strong>
-                <div class="row" id="mostrarAlerta"></div>
+          <!-- Modal body -->
+          <div class="modal-body">
+            <div class="form-group">
+              <input type="hidden" id="txtIdPaciente">
+              <label for="txtNombre">Nombre:</label>
+              <input type="text" class="form-control" placeholder="Ingrese el nombre" id="txtNombre">
+              <label for="txtEdad">Edad:</label>
+              <input type="number" class="form-control" placeholder="Ingrese la edad" id="txtEdad">
+              <label for="txtPeso">Peso (kg):</label>
+              <input type="number" step="0.1" class="form-control" placeholder="Ingrese el peso en kg" id="txtPeso">
+              <label for="txtAltura">Altura (cm):</label>
+              <input type="number" step="0.1" class="form-control" placeholder="Ingrese la altura en cm" id="txtAltura">
             </div>
+          </div>
+
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="btnGuardar">Guardar</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+          </div>
         </div>
+      </div>
+    </div>
+    
+    <div class="row mt-4 d-none" id="rowAlerta">
+      <div class="col col-md-12">
+        <div class="alert alert-success">
+          <strong>Registro Exitoso!</strong>
+          <div class="row" id="mostrarAlerta"></div>
+        </div>
+      </div>
     </div>
 </div>
 {% endblock %}
 
 {% block js %}
-<script> 
-
+<script>
   const initDatatable = () => {
     $('#tbl').DataTable({
       language: {
         url: "{{ url_for('static', filename='vendor/datatables/es-ES.json') }}",
       },
-      ajax:'/api/v1/pacientes',      
+      ajax:'/api/v1/pacientes',
       columns: [
-        { data: 'descripcion' },
+        { data: 'nombre' },
+        { data: 'edad' },
+        { data: 'peso' },
+        { data: 'altura' },
         { data: function(row) {
             return `<button type="button" name="btn_editar" class="btn btn-primary" data-id="${row.id}">Editar</button>
-                    <button type="button" name="btn_eliminar" class="btn btn-danger" data-id="${row.id}">Eliminar</button>`
+                    <button type="button" name="btn_eliminar" class="btn btn-danger" data-id="${row.id}">Eliminar</button>`;
           }
         }
       ]
@@ -91,11 +99,12 @@ Pacientes
 
   const agregar = () => {
     $('#btnAgregar').on('click', function(){
-      // Setear un título a modal
-      $('#modalTitle').text("Agrege datos del paciente");
-      // inicia ventana modal
+      $('#modalTitle').text("Agregar Paciente");
       $('#txtIdPaciente').val("");
-      $('#txtDescripcion').val("");
+      $('#txtNombre').val("");
+      $('#txtEdad').val("");
+      $('#txtPeso').val("");
+      $('#txtAltura').val("");
       $('#modalFormulario').modal();
     });
   }
@@ -103,7 +112,10 @@ Pacientes
   const guardar = () => {
     $('#btnGuardar').on('click', function() {
       const idPaciente = $('#txtIdPaciente').val();
-      const nuevaDescripcion = $('#txtDescripcion').val();
+      const nuevoNombre = $('#txtNombre').val();
+      const nuevaEdad = $('#txtEdad').val();
+      const nuevoPeso = $('#txtPeso').val();
+      const nuevaAltura = $('#txtAltura').val();
       const tabla = $('#tbl').DataTable();
 
       if(idPaciente) {
@@ -112,7 +124,7 @@ Pacientes
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
-          }, body: JSON.stringify({ descripcion: nuevaDescripcion})
+          }, body: JSON.stringify({ nombre: nuevoNombre, edad: nuevaEdad, peso: nuevoPeso, altura: nuevaAltura })
         })
         .then(resp => resp.json())
         .then(data => {
@@ -132,29 +144,27 @@ Pacientes
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
-          }, body: JSON.stringify({ descripcion: nuevaDescripcion})
+          }, body: JSON.stringify({ nombre: nuevoNombre, edad: nuevaEdad, peso: nuevoPeso, altura: nuevaAltura })
         })
         .then(resp => resp.json())
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "El paciente a sido agregado correctamente.", "success");
+            Swal.fire("Agregado", "El paciente ha sido agregado correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }
         }).catch(err => {
           console.error(err);
-          Swal.fire("Error", "Ocurrió un error al guardar al paciente.", "error");
+          Swal.fire("Error", "Ocurrió un error al guardar el paciente.", "error");
         });
       }
-      $('#txtDescripcion').val("");
       $('#modalFormulario').modal("hide");
     });
   }
 
   const editar = () => {
     $('#tbl').on('click', 'button[name="btn_editar"]',function(){
-      // Mostrar mensaje de confirmación usando sweetalert
       Swal.fire({
         title: "¿Deseas editar este registro?",
         showCancelButton: true,
@@ -162,13 +172,12 @@ Pacientes
         cancelButtonText: `No`
       }).then((result) => {
         if (result.isConfirmed) {
-          //Swal.fire("Saved!", "", "success");
-          $('#modalTitle').text("Editar un paciente");
+          $('#modalTitle').text("Editar Paciente");
 
           const idPaciente = $(this).data('id');
           $('#txtIdPaciente').val(idPaciente);
 
-          // Necesitamos obtener la descripción del backend
+          // Obtener los datos del paciente del backend
           fetch(`/api/v1/pacientes/${idPaciente}`, {
             method: 'GET',
             headers: {
@@ -177,7 +186,10 @@ Pacientes
           })
           .then(resp => resp.json())
           .then(data => {
-            $('#txtDescripcion').val(data.data.descripcion);
+            $('#txtNombre').val(data.data.nombre);
+            $('#txtEdad').val(data.data.edad);
+            $('#txtPeso').val(data.data.peso);
+            $('#txtAltura').val(data.data.altura);
             $('#modalFormulario').modal();
           });
         }
@@ -188,7 +200,6 @@ Pacientes
   const eliminar = () => {
     $('#tbl').on('click', 'button[name="btn_eliminar"]',function(){
       const idPaciente = $(this).data('id');
-      // Mostrar mensaje de confirmación usando sweetalert
       Swal.fire({
         title: "¿Deseas eliminar este registro?",
         showCancelButton: true,
@@ -205,11 +216,10 @@ Pacientes
           .then(resp => resp.json())
           .then(data => {
             if(data && !data.error && data.success) {
-              // Para borrar la fila del datatable(cliente)
               const fila =$(this).closest('tr');
               const tabla = $('#tbl').DataTable();
               tabla.row(fila).remove().draw();
-              Swal.fire("Eliminado", "", data.success);
+              Swal.fire("Eliminado", "El paciente ha sido eliminado correctamente.", "success");
             } else {
               Swal.fire(data.error);
             }
@@ -218,7 +228,6 @@ Pacientes
           });
         }
       });
-
     });
   }
 

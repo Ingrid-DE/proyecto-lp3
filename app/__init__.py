@@ -6,7 +6,7 @@ app = Flask(__name__)
 from app.rutas.referenciales.ciudad.ciudad_routes import ciumod 
 from app.rutas.referenciales.persona.persona_routes import persona_mod
 from app.rutas.referenciales.medico.medico_routes import medmod
-from app.rutas.referenciales.paciente.paciente_routes import pacmod
+from app.rutas.referenciales.paciente.paciente_routes import pacientemod
 from app.rutas.referenciales.servicio.servicio_routes import sermod
 from app.rutas.referenciales.ocupacion.ocupacion_routes import ocumod
 from app.rutas.referenciales.turno.turno_routes import turmod
@@ -37,9 +37,9 @@ app.register_blueprint(medmod, url_prefix=f'{modulo0}/medico')
 from app.rutas.referenciales.medico.medico_api import medapi
 
 modulo0 = '/referenciales'
-app.register_blueprint(pacmod, url_prefix=f'{modulo0}/paciente')
+app.register_blueprint(pacientemod, url_prefix=f'{modulo0}/paciente')
 
-from app.rutas.referenciales.paciente.paciente_api import pacapi
+from app.rutas.referenciales.paciente.paciente_api import pacienteapi
 
 modulo0 = '/referenciales'
 app.register_blueprint(sermod, url_prefix=f'{modulo0}/servicio')
@@ -104,7 +104,7 @@ app.register_blueprint(personaapi, url_prefix=version1)
 
 app.register_blueprint(medapi,url_prefix=version1)
 
-app.register_blueprint(pacapi, url_prefix=version1)
+app.register_blueprint(pacienteapi, url_prefix=version1)
 
 app.register_blueprint(serapi, url_prefix=version1)
 

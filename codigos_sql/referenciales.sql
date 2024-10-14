@@ -41,11 +41,13 @@ CREATE TABLE
 		, descripcion varchar(60) UNIQUE
 	);
 
-CREATE TABLE
-	pacientes(
-		id serial PRIMARY KEY
-		, descripcion varchar(60) UNIQUE
-	);
+CREATE TABLE pacientes (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    edad INT NOT NULL CHECK (edad >= 0),  -- Asegura que la edad no sea negativa
+    peso DECIMAL(5, 2) NOT NULL CHECK (peso >= 0),  -- Asegura que el peso no sea negativo
+    altura DECIMAL(5, 2) NOT NULL CHECK (altura >= 0)  -- Asegura que la altura no sea negativa
+);
 
 CREATE TABLE
 	enfermedades(

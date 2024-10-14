@@ -1,10 +1,10 @@
 from flask import Blueprint, request, jsonify, current_app as app
 from app.dao.referenciales.persona.PersonaDao import PersonaDao
 
-perapi = Blueprint('perapi', __name__)
+personaapi = Blueprint('personaapi', __name__)
 
 # Trae todas las personas
-@perapi.route('/personas', methods=['GET'])
+@personaapi.route('/personas', methods=['GET'])
 def getPersonas():
     personadao = PersonaDao()
 
@@ -23,9 +23,8 @@ def getPersonas():
             'success': False,
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
-    
 
-@perapi.route('/personas/<int:persona_id>', methods=['GET'])
+@personaapi.route('/personas/<int:persona_id>', methods=['GET'])
 def getPersona(persona_id):
     personadao = PersonaDao()
 
@@ -45,43 +44,43 @@ def getPersona(persona_id):
             }), 404
 
     except Exception as e:
-        app.logger.error(f"Error al obtener persona: {str(e)}")
+        app.logger.error(f"Error al obtener la persona: {str(e)}")
         return jsonify({
             'success': False,
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
-    
 
 # Agrega una nueva persona
-@perapi.route('/personas', methods=['POST'])
+@personaapi.route('/personas', methods=['POST'])
 def addPersona():
     data = request.get_json()
     personadao = PersonaDao()
 
-    campos_requeridos = ['descripcion', 'apellido', 'cedula']
+    # Validar que el JSON no esté vacío y tenga las propiedades necesarias
+    campos_requeridos = ['nombre', 'apellido', 'cedula']
 
     # Verificar si faltan campos o son vacíos
     for campo in campos_requeridos:
         if campo not in data or data[campo] is None or len(data[campo].strip()) == 0:
             return jsonify({
-                            'success': False,
-                            'error': f'El campo {campo} es obligatorio y no puede estar vacío.'
-                            }), 400
+                'success': False,
+                'error': f'El campo {campo} es obligatorio y no puede estar vacío.'
+            }), 400
 
     try:
-        descripcion = data['descripcion']
-        apellido = data['apellido']
-        cedula = data['cedula']
-        persona_id = personadao.guardarPersona(descripcion, apellido, cedula)
+        nombre = data['nombre'].upper()
+        apellido = data['apellido'].upper()
+        cedula = data['cedula'].strip()
 
+        persona_id = personadao.guardarPersona(nombre, apellido, cedula)
         if persona_id is not None:
             return jsonify({
                 'success': True,
-                'data': {'id': persona_id, 'descripcion': descripcion, 'apellido': apellido, 'cedula': cedula},
+                'data': {'id': persona_id, 'nombre': nombre, 'apellido': apellido, 'cedula': cedula},
                 'error': None
             }), 201
         else:
-            return jsonify({ 'success': False, 'error': 'No se pudo guardar la persona. Consulte con el administrador.' }), 500
+            return jsonify({'success': False, 'error': 'No se pudo guardar la persona. Consulte con el administrador.'}), 500
     except Exception as e:
         app.logger.error(f"Error al agregar persona: {str(e)}")
         return jsonify({
@@ -89,31 +88,31 @@ def addPersona():
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
 
-@perapi.route('/personas/<int:persona_id>', methods=['PUT'])
+@personaapi.route('/personas/<int:persona_id>', methods=['PUT'])
 def updatePersona(persona_id):
     data = request.get_json()
     personadao = PersonaDao()
 
     # Validar que el JSON no esté vacío y tenga las propiedades necesarias
-    campos_requeridos = ['descripcion', 'apellido', 'cedula']
+    campos_requeridos = ['nombre', 'apellido', 'cedula']
 
     # Verificar si faltan campos o son vacíos
     for campo in campos_requeridos:
         if campo not in data or data[campo] is None or len(data[campo].strip()) == 0:
             return jsonify({
-                            'success': False,
-                            'error': f'El campo {campo} es obligatorio y no puede estar vacío.'
-                            }), 400
-        
-    try:    
-        descripcion = data['descripcion']
-        apellido = data['apellido']
-        cedula = data['cedula']
+                'success': False,
+                'error': f'El campo {campo} es obligatorio y no puede estar vacío.'
+            }), 400
 
-        if personadao.updatePersona(persona_id, descripcion, apellido, cedula):
+    try:
+        nombre = data['nombre'].upper()
+        apellido = data['apellido'].upper()
+        cedula = data['cedula'].strip()
+
+        if personadao.updatePersona(persona_id, nombre, apellido, cedula):
             return jsonify({
                 'success': True,
-                'data': {'id': persona_id, 'descripcion': descripcion, 'apellido': apellido, 'cedula': cedula},
+                'data': {'id': persona_id, 'nombre': nombre, 'apellido': apellido, 'cedula': cedula},
                 'error': None
             }), 200
         else:
@@ -121,7 +120,6 @@ def updatePersona(persona_id):
                 'success': False,
                 'error': 'No se encontró la persona con el ID proporcionado o no se pudo actualizar.'
             }), 404
-        
     except Exception as e:
         app.logger.error(f"Error al actualizar persona: {str(e)}")
         return jsonify({
@@ -129,7 +127,7 @@ def updatePersona(persona_id):
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
 
-@perapi.route('/personas/<int:persona_id>', methods=['DELETE'])
+@personaapi.route('/personas/<int:persona_id>', methods=['DELETE'])
 def deletePersona(persona_id):
     personadao = PersonaDao()
 

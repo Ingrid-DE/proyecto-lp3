@@ -10,13 +10,12 @@ CREATE TABLE
 		, descripcion varchar(60) UNIQUE
 	);
 
-CREATE TABLE
-	personas(
-		id serial PRIMARY KEY,
-		descripcion varchar(100) UNIQUE,
-		apellido varchar(100),
-		cedula TEXT NOT NULL	
-	); 
+CREATE TABLE personas (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(255),
+    apellido VARCHAR(255),
+    cedula VARCHAR(50)
+); 
 
 CREATE TABLE
 	generos(

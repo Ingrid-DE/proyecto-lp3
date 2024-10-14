@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
 {% block titulo %}
-  Datos personales
+Personas
 {% endblock %}
 
 {% block contenido %}
 <div class="container mt-4">
-    <h3>Agrega tus datos</h3>
+    <h3>Listar Personas</h3>
 
     <!-- tarjeta -->
     <div class="card">
@@ -17,156 +17,148 @@
         <table class="table table-striped" id="tbl">
           <thead>
             <tr>
-              <th>Nombre</th>
-              <th>Apellido </th>
-              <th>Cédula</th>
+              <th>Nombre:</th>
+              <th>Apellido:</th>
+              <th>Cédula:</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody></tbody>
-      </table>
+        </table>
       </div>
     </div>
- <!-- /tarjeta -->
+    <!-- /tarjeta -->
 
- <!-- El formulario -->
- <div class="modal" id="modalFormulario">
-  <!-- La clase modal-dialog-centered centra el modal -->
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-    
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h4 class="modal-title" id="modalTitle"></h4>
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-      </div>
+    <!-- El formulario -->
+    <div class="modal" id="modalFormulario">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title" id="modalTitle"></h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
 
-      <!-- Modal body -->
-      <div class="modal-body">
-        <div class="form-group">
-          <input type="hidden" id="txtIdPersona">
-          <label for="txtDescripcion">Nombre:</label>
-          <input type="text" class="form-control" placeholder="Ingrese su nombre" id="txtDescripcion">
-          <label for="txtApellido">Apellido:</label>
-          <input type="text" class="form-control" placeholder="Ingrese su apellido" id="txtApellido">
-          <label for="txtCedula">Cédula:</label>
-          <input type="text" class="form-control" placeholder="Ingrese su n° de cédula" id="txtCedula">
-       </div>
-      </div> 
-     
-      <!-- Modal footer -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="btnGuardar">Guardar</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-      </div>
-
-      
-     </div>
-    </div>
-  </div>
-
-  <div class="row mt-4 d-none" id="rowAlerta">
-        <div class="col col-md-12">
-            <div class="alert alert-success">
-                <strong>Registro Exitoso!</strong>
-                <div class="row" id="mostrarAlerta"></div>
+          <!-- Modal body -->
+          <div class="modal-body">
+            <div class="form-group">
+              <input type="hidden" id="txtIdPersona">
+              <label for="txtNombre">Nombre:</label>
+              <input type="text" class="form-control" placeholder="Ingrese el nombre" id="txtNombre">
+              <label for="txtApellido">Apellido:</label>
+              <input type="text" class="form-control" placeholder="Ingrese el apellido" id="txtApellido">
+              <label for="txtCedula">Cédula:</label>
+              <input type="text" class="form-control" placeholder="Ingrese la cédula" id="txtCedula">
             </div>
+          </div>
+
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="btnGuardar">Guardar</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+          </div>
         </div>
+      </div>
+    </div>
+    
+    <div class="row mt-4 d-none" id="rowAlerta">
+      <div class="col col-md-12">
+        <div class="alert alert-success">
+          <strong>Registro Exitoso!</strong>
+          <div class="row" id="mostrarAlerta"></div>
+        </div>
+      </div>
     </div>
 </div>
 {% endblock %}
 
 {% block js %}
-<script> 
+<script>
   const initDatatable = () => {
     $('#tbl').DataTable({
       language: {
         url: "{{ url_for('static', filename='vendor/datatables/es-ES.json') }}",
       },
-      ajax:'/api/v1/personas',      
+      ajax:'/api/v1/personas',
       columns: [
-        { data: 'descripcion' },
+        { data: 'nombre' },
         { data: 'apellido' },
         { data: 'cedula' },
         { data: function(row) {
             return `<button type="button" name="btn_editar" class="btn btn-primary" data-id="${row.id}">Editar</button>
-                    <button type="button" name="btn_eliminar" class="btn btn-danger" data-id="${row.id}">Eliminar</button>`
+                    <button type="button" name="btn_eliminar" class="btn btn-danger" data-id="${row.id}">Eliminar</button>`;
           }
         }
-      ] 
+      ]
     });
   }
 
   const agregar = () => {
     $('#btnAgregar').on('click', function(){
-      $('#modalTitle').text("agrega los datos personales");
+      $('#modalTitle').text("Agregar Persona");
       $('#txtIdPersona').val("");
-      $('#txtDescripcion').val("");
+      $('#txtNombre').val("");
       $('#txtApellido').val("");
       $('#txtCedula').val("");
       $('#modalFormulario').modal();
     });
   }
 
- const guardar = () => {
+  const guardar = () => {
     $('#btnGuardar').on('click', function() {
       const idPersona = $('#txtIdPersona').val();
-      const nuevaDescripcion=$('#txtDescripcion').val("");
-      const nuevaApellido=$('#txtApellido').val("");
-      const nuevaCedula=$('#txtCedula').val("");
+      const nuevoNombre = $('#txtNombre').val();
+      const nuevoApellido = $('#txtApellido').val();
+      const nuevaCedula = $('#txtCedula').val();
       const tabla = $('#tbl').DataTable();
 
-      if(idPersona) { 
+      if(idPersona) {
         // update
         fetch(`/api/v1/personas/${idPersona}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
-          }, body: JSON.stringify({ descripcion: nuevaDescripcion, apellido: nuevaApellido, cedula: nuevaCedula})
+          }, body: JSON.stringify({ nombre: nuevoNombre, apellido: nuevoApellido, cedula: nuevaCedula })
         })
         .then(resp => resp.json())
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "los datos de la persona a sido guardado correctamente.", "success");
+            Swal.fire("Actualizado", "La persona ha sido actualizada correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }
         }).catch(err => {
           console.error(err);
-          Swal.fire("Error", "Ocurrió un error al actualizar los datos de la persona.", "error");
+          Swal.fire("Error", "Ocurrió un error al actualizar la persona.", "error");
         });
       } else {
         // insert
-        fetch(`/api/v1/personas`, { 
+        fetch(`/api/v1/personas`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
-          }, body: JSON.stringify({ descripcion: nuevaDescripcion, apellido: nuevaApellido, cedula: nuevaCedula})
+          }, body: JSON.stringify({ nombre: nuevoNombre, apellido: nuevoApellido, cedula: nuevaCedula })
         })
         .then(resp => resp.json())
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "Los datos de la persona a sido guardado correctamente.", "success");
+            Swal.fire("Agregado", "La persona ha sido agregada correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }
         }).catch(err => {
           console.error(err);
-          Swal.fire("Error", "Ocurrió un error al guardar los datos de la persona.", "error");
+          Swal.fire("Error", "Ocurrió un error al guardar la persona.", "error");
         });
       }
-      $('#txtDescripcion').val("");
-      $('#txtApellido').val("");
-      $('#txtCedula').val("");
       $('#modalFormulario').modal("hide");
     });
   }
 
   const editar = () => {
     $('#tbl').on('click', 'button[name="btn_editar"]',function(){
-      // Mostrar mensaje de confirmación usando sweetalert
       Swal.fire({
         title: "¿Deseas editar este registro?",
         showCancelButton: true,
@@ -174,13 +166,12 @@
         cancelButtonText: `No`
       }).then((result) => {
         if (result.isConfirmed) {
-          //Swal.fire("Saved!", "", "success");
-          $('#modalTitle').text("Editar una Persona");
+          $('#modalTitle').text("Editar Persona");
 
           const idPersona = $(this).data('id');
           $('#txtIdPersona').val(idPersona);
 
-          // Necesitamos obtener la descripción del backend
+          // Obtener los datos de la persona del backend
           fetch(`/api/v1/personas/${idPersona}`, {
             method: 'GET',
             headers: {
@@ -189,9 +180,9 @@
           })
           .then(resp => resp.json())
           .then(data => {
-         $('#txtDescripcion').val("");(data.data.descripcion);
-         $('#txtApellido').val("");(data.data.apellido);
-         $('#txtCedula').val("");(data.data.cedula);
+            $('#txtNombre').val(data.data.nombre);
+            $('#txtApellido').val(data.data.apellido);
+            $('#txtCedula').val(data.data.cedula);
             $('#modalFormulario').modal();
           });
         }
@@ -202,7 +193,6 @@
   const eliminar = () => {
     $('#tbl').on('click', 'button[name="btn_eliminar"]',function(){
       const idPersona = $(this).data('id');
-      // Mostrar mensaje de confirmación usando sweetalert
       Swal.fire({
         title: "¿Deseas eliminar este registro?",
         showCancelButton: true,
@@ -219,16 +209,15 @@
           .then(resp => resp.json())
           .then(data => {
             if(data && !data.error && data.success) {
-              // Para borrar la fila del datatable(cliente)
               const fila =$(this).closest('tr');
               const tabla = $('#tbl').DataTable();
               tabla.row(fila).remove().draw();
-              Swal.fire("Eliminado", "", data.success);
+              Swal.fire("Eliminado", "La persona ha sido eliminada correctamente.", "success");
             } else {
               Swal.fire(data.error);
             }
           }).catch(err => {
-            Swal.fire("Error", "Ocurrió un error al eliminar los datos de la persona.", "error");
+            Swal.fire("Error", "Ocurrió un error al eliminar la persona.", "error");
           });
         }
       });
@@ -247,5 +236,4 @@
     addEvents();
   }); 
 </script> 
-
 {% endblock %}

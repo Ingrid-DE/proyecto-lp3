@@ -27,6 +27,7 @@ CREATE TABLE productos(
     precio_unitario INTEGER
 );
 
+
 CREATE TABLE personas(
     id_persona SERIAL PRIMARY KEY,
     nombres VARCHAR(70) NOT NULL,
@@ -82,3 +83,5 @@ CREATE TABLE pedido_de_compra_detalle(
     , FOREIGN KEY(id_pedido_compra) REFERENCES pedido_de_compra(id_pedido_compra)
     , FOREIGN KEY(id_producto) REFERENCES productos(id_producto)
 );
+
+ALTER TABLE productos ALTER COLUMN precio_unitario TYPE DECIMAL(10,2);

@@ -5,14 +5,11 @@ class Conexion:
     """Metodo constructor
     """
     def __init__(self):
-        self.con = psycopg2.connect(dbname="Examen_final-bd", user="postgres", password="19092003", host="localhost", port=5432)
-   
+        
+        self.con = psycopg2.connect(dbname="lp3-db", user="postgres", password= "19092003", host="localhost", port=5432)
+
     """getConexion
-
-        retorno la instancia de la base de datos
-
-     """
-   
-    
+        retorna la instancia de la base de datos
+    """
     def getConexion(self):
         return self.con

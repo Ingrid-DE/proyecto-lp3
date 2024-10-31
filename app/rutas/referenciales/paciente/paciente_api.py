@@ -57,7 +57,7 @@ def addPaciente():
     pacientedao = PacienteDao()
 
     # Validar que el JSON no esté vacío y tenga las propiedades necesarias
-    campos_requeridos = ['nombre', 'edad', 'peso', 'altura']
+    campos_requeridos = ['idpe', 'edad', 'peso', 'altura']
 
     # Verificar si faltan campos o son vacíos
     for campo in campos_requeridos:
@@ -68,16 +68,16 @@ def addPaciente():
             }), 400
 
     try:
-        nombre = data['nombre'].upper()
+        idpe = int(data['idpe'])
         edad = int(data['edad'])
         peso = float(data['peso'])
         altura = float(data['altura'])
 
-        paciente_id = pacientedao.guardarPaciente(nombre, edad, peso, altura)
+        paciente_id = pacientedao.guardarPaciente(idpe, edad, peso, altura)
         if paciente_id is not None:
             return jsonify({
                 'success': True,
-                'data': {'id': paciente_id, 'nombre': nombre, 'edad': edad, 'peso': peso, 'altura': altura},
+                'data': {'id': paciente_id, 'id_persona': idpe, 'edad': edad, 'peso': peso, 'altura': altura},
                 'error': None
             }), 201
         else:
@@ -95,7 +95,7 @@ def updatePaciente(paciente_id):
     pacientedao = PacienteDao()
 
     # Validar que el JSON no esté vacío y tenga las propiedades necesarias
-    campos_requeridos = ['nombre', 'edad', 'peso', 'altura']
+    campos_requeridos = ['idpe', 'edad', 'peso', 'altura']
 
     # Verificar si faltan campos o son vacíos
     for campo in campos_requeridos:
@@ -106,15 +106,15 @@ def updatePaciente(paciente_id):
             }), 400
 
     try:
-        nombre = data['nombre'].upper()
+        idpe = int(data['idpe'])
         edad = int(data['edad'])
         peso = float(data['peso'])
         altura = float(data['altura'])
 
-        if pacientedao.updatePaciente(paciente_id, nombre, edad, peso, altura):
+        if pacientedao.updatePaciente(paciente_id, idpe, edad, peso, altura):
             return jsonify({
                 'success': True,
-                'data': {'id': paciente_id, 'nombre': nombre, 'edad': edad, 'peso': peso, 'altura': altura},
+                'data': {'id': paciente_id, 'id_persona': idpe, 'edad': edad, 'peso': peso, 'altura': altura},
                 'error': None
             }), 200
         else:

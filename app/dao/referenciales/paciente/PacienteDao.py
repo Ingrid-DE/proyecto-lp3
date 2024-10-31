@@ -5,8 +5,9 @@ class PacienteDao:
 
     def getPacientes(self):
         pacienteSQL = """
-        SELECT id, nombre, edad, peso, altura
-        FROM pacientes
+        SELECT  p.id, pe.nombre,pe.apellido,pe.cedula,p.edad, p.peso, p.altura, pe.id 
+        FROM pacientes p, personas pe 
+        where p.id_persona = pe.id
         """
         conexion = Conexion()
         con = conexion.getConexion()
@@ -16,7 +17,7 @@ class PacienteDao:
             pacientes = cur.fetchall()
 
             # Transformar los datos en una lista de diccionarios con los nuevos campos
-            return [{'id': paciente[0], 'nombre': paciente[1], 'edad': paciente[2], 'peso': paciente[3], 'altura': paciente[4]} for paciente in pacientes]
+            return [{'id': paciente[0], 'nombre': paciente[1], 'apellido': paciente[2], 'cedula': paciente[3], 'edad': paciente[4],'peso': paciente[5], 'altura': paciente[6], 'idpe': paciente[7]} for paciente in pacientes]
 
         except Exception as e:
             app.logger.error(f"Error al obtener todos los pacientes: {str(e)}")
@@ -28,8 +29,9 @@ class PacienteDao:
 
     def getPacienteById(self, id):
         pacienteSQL = """
-        SELECT id, nombre, edad, peso, altura
-        FROM pacientes WHERE id=%s
+        SELECT  p.id, pe.nombre,pe.apellido,pe.cedula,p.edad, p.peso, p.altura,pe.id 
+        FROM pacientes p, personas pe 
+        where p.id_persona = pe.id and p.id = %s
         """
         conexion = Conexion()
         con = conexion.getConexion()
@@ -41,9 +43,12 @@ class PacienteDao:
                 return {
                     "id": pacienteEncontrado[0],
                     "nombre": pacienteEncontrado[1],
-                    "edad": pacienteEncontrado[2],
-                    "peso": pacienteEncontrado[3],
-                    "altura": pacienteEncontrado[4]
+                    "apellido": pacienteEncontrado[2],
+                    "cedula": pacienteEncontrado[3],
+                    "edad": pacienteEncontrado[4],
+                    "peso": pacienteEncontrado[5],
+                    "altura": pacienteEncontrado[6],
+                    "idpe": pacienteEncontrado[7]
                 }
             else:
                 return None
@@ -55,9 +60,9 @@ class PacienteDao:
             cur.close()
             con.close()
 
-    def guardarPaciente(self, nombre, edad, peso, altura):
+    def guardarPaciente(self, idpe, edad, peso, altura):
         insertPacienteSQL = """
-        INSERT INTO pacientes(nombre, edad, peso, altura) 
+        INSERT INTO pacientes(id_persona, edad, peso, altura) 
         VALUES(%s, %s, %s, %s) RETURNING id
         """
         conexion = Conexion()
@@ -65,7 +70,7 @@ class PacienteDao:
         cur = con.cursor()
 
         try:
-            cur.execute(insertPacienteSQL, (nombre, edad, peso, altura))
+            cur.execute(insertPacienteSQL, (idpe, edad, peso, altura))
             paciente_id = cur.fetchone()[0]
             con.commit()
             return paciente_id
@@ -79,10 +84,10 @@ class PacienteDao:
             cur.close()
             con.close()
 
-    def updatePaciente(self, id, nombre, edad, peso, altura):
+    def updatePaciente(self, id, idpe, edad, peso, altura):
         updatePacienteSQL = """
         UPDATE pacientes
-        SET nombre=%s, edad=%s, peso=%s, altura=%s
+        SET id_persona=%s, edad=%s, peso=%s, altura=%s
         WHERE id=%s
         """
         conexion = Conexion()
@@ -90,7 +95,7 @@ class PacienteDao:
         cur = con.cursor()
 
         try:
-            cur.execute(updatePacienteSQL, (nombre, edad, peso, altura, id))
+            cur.execute(updatePacienteSQL, (idpe, edad, peso, altura, id))
             filas_afectadas = cur.rowcount
             con.commit()
             return filas_afectadas > 0

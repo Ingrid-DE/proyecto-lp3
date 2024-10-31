@@ -1,8 +1,7 @@
-CREATE TABLE
-	ciudades(
-		id serial PRIMARY KEY
-		, descripcion varchar(60) UNIQUE
-	);
+CREATE TABLE ciudades (
+    id serial PRIMARY KEY,
+    descripcion varchar(60)
+);
 
 CREATE TABLE
 	paises(

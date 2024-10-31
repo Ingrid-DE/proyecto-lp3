@@ -18,6 +18,8 @@ Pacientes
           <thead>
             <tr>
               <th>Nombre:</th>
+              <th>Apellido:</th>
+              <th>Ci:</th>
               <th>Edad:</th>
               <th>Peso:</th>
               <th>Altura:</th>
@@ -44,8 +46,9 @@ Pacientes
           <div class="modal-body">
             <div class="form-group">
               <input type="hidden" id="txtIdPaciente">
-              <label for="txtNombre">Nombre:</label>
-              <input type="text" class="form-control" placeholder="Ingrese el nombre" id="txtNombre">
+              <input type="hidden" id="idpe">
+              <label for="txtPersona">Persona:</label>
+              <input type="text" class="form-control" placeholder="clik para buscar persona" id="txtPersona" readonly>
               <label for="txtEdad">Edad:</label>
               <input type="number" class="form-control" placeholder="Ingrese la edad" id="txtEdad">
               <label for="txtPeso">Peso (kg):</label>
@@ -59,6 +62,32 @@ Pacientes
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" id="btnGuardar">Guardar</button>
             <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="modalBuscarPersona">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="modalPersonaTitle">Seleccionar Persona</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-striped" id="tblPersona">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>CI</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -85,6 +114,8 @@ Pacientes
       ajax:'/api/v1/pacientes',
       columns: [
         { data: 'nombre' },
+        { data: 'apellido' },
+        { data: 'cedula' },
         { data: 'edad' },
         { data: 'peso' },
         { data: 'altura' },
@@ -97,11 +128,43 @@ Pacientes
     });
   }
 
+  const initDatatablep= () => {
+    $('#tblPersona').DataTable({
+      language: {
+        url: "{{ url_for('static', filename='vendor/datatables/es-ES.json') }}",
+      },
+      ajax:'/api/v1/personas',
+      columns: [
+        { data: 'nombre' },
+        { data: 'apellido' },
+        { data: 'cedula' },
+        { data: function(row) {
+            return `<button type="button" name="btn_seleccionar_persona" class="fa fa-chek" data-id="${row.id}" data-nombre="${row.nombre}">Selecionar</button>`;
+          }
+        }
+      ]
+    });
+    $('#tblPersona').on('click', 'button[name="btn_seleccionar_persona"]', function () {
+      const idPersona = $(this).data('id');
+      const persona = $(this).data('nombre');
+      $('#txtPersona').val(persona);
+      $('#idpe').val(idPersona);
+      $('#modalBuscarPersona').modal('hide');
+    });
+  }
+
+  const buscarPersona = () => {
+    $('#txtPersona').on('click', function () {
+      $('#modalPersonaTitle').text("Seleccionar Persona");
+      $('#modalBuscarPersona').modal();
+    });
+  }
+
   const agregar = () => {
     $('#btnAgregar').on('click', function(){
       $('#modalTitle').text("Agregar Paciente");
       $('#txtIdPaciente').val("");
-      $('#txtNombre').val("");
+      $('#idpe').val("");
       $('#txtEdad').val("");
       $('#txtPeso').val("");
       $('#txtAltura').val("");
@@ -112,7 +175,7 @@ Pacientes
   const guardar = () => {
     $('#btnGuardar').on('click', function() {
       const idPaciente = $('#txtIdPaciente').val();
-      const nuevoNombre = $('#txtNombre').val();
+      const idpe = $('#idpe').val();
       const nuevaEdad = $('#txtEdad').val();
       const nuevoPeso = $('#txtPeso').val();
       const nuevaAltura = $('#txtAltura').val();
@@ -124,7 +187,7 @@ Pacientes
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
-          }, body: JSON.stringify({ nombre: nuevoNombre, edad: nuevaEdad, peso: nuevoPeso, altura: nuevaAltura })
+          }, body: JSON.stringify({ idpe: idpe, edad: nuevaEdad, peso: nuevoPeso, altura: nuevaAltura })
         })
         .then(resp => resp.json())
         .then(data => {
@@ -144,7 +207,7 @@ Pacientes
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
-          }, body: JSON.stringify({ nombre: nuevoNombre, edad: nuevaEdad, peso: nuevoPeso, altura: nuevaAltura })
+          }, body: JSON.stringify({ idpe: idpe, edad: nuevaEdad, peso: nuevoPeso, altura: nuevaAltura })
         })
         .then(resp => resp.json())
         .then(data => {
@@ -236,10 +299,12 @@ Pacientes
     guardar();
     editar();
     eliminar();
+    buscarPersona();
   }
 
   $(function() {
     initDatatable();
+    initDatatablep();
     addEvents();
   }); 
 </script> 

@@ -1,60 +1,61 @@
 from flask import Blueprint, request, jsonify, current_app as app
-from app.dao.referenciales.servicio.ServicioDao import ServicioDao
+from app.dao.referenciales.estado_cita.Estado_citaDao import Estado_citaDao
 
-serapi = Blueprint('serapi', __name__)
+estadoapi = Blueprint('estadoapi', __name__)  # Cambié estapi por estadoapi
 
-# Trae todas las ciudades
-@serapi.route('/servicios', methods=['GET'])
-def getServicios():
-    serdao = ServicioDao()
+# Trae todos los estado_citas
+@estadoapi.route('/estado_citas', methods=['GET'])
+def getEstado_citas():
+    estadodao = Estado_citaDao()  # Cambié estdao por estadodao
 
     try:
-        servicios = serdao.getServicios()
+        estado_citas = estadodao.getEstado_citas()
 
         return jsonify({
             'success': True,
-            'data': servicios,
+            'data': estado_citas,
             'error': None
         }), 200
 
     except Exception as e:
-        app.logger.error(f"Error al obtener todos los servicios: {str(e)}")
+        app.logger.error(f"Error al obtener todos los estado_citas: {str(e)}")
         return jsonify({
             'success': False,
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
 
-@serapi.route('/servicios/<int:servicio_id>', methods=['GET'])
-def getServicio(servicio_id):
-    serdao = ServicioDao()
+# Trae un estado_cita por ID
+@estadoapi.route('/estado_citas/<int:estado_cita_id>', methods=['GET'])
+def getEstado_cita(estado_cita_id):
+    estadodao = Estado_citaDao()  # Cambié estdao por estadodao
 
     try:
-        servicio = serdao.getServicioById(servicio_id)
+        estado_cita = estadodao.getEstado_citaById(estado_cita_id)
 
-        if servicio:
+        if estado_cita:
             return jsonify({
                 'success': True,
-                'data': servicio,
+                'data': estado_cita,
                 'error': None
             }), 200
         else:
             return jsonify({
                 'success': False,
-                'error': 'No se encontró la ciudad con el ID proporcionado.'
+                'error': 'No se encontró el estado_cita con el ID proporcionado.'
             }), 404
 
     except Exception as e:
-        app.logger.error(f"Error al obtener servicio: {str(e)}")
+        app.logger.error(f"Error al obtener estado_cita: {str(e)}")
         return jsonify({
             'success': False,
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
 
-# Agrega una nueva ciudad
-@serapi.route('/servicios', methods=['POST'])
-def addServicio():
+# Agrega un nuevo estado_cita
+@estadoapi.route('/estado_citas', methods=['POST'])
+def addEstado_cita():
     data = request.get_json()
-    serdao = ServicioDao()
+    estadodao = Estado_citaDao()  # Cambié estdao por estadodao
 
     # Validar que el JSON no esté vacío y tenga las propiedades necesarias
     campos_requeridos = ['descripcion']
@@ -69,26 +70,27 @@ def addServicio():
 
     try:
         descripcion = data['descripcion'].upper()
-        servicio_id = serdao.guardarServicio(descripcion)
-        if servicio_id is not None:
+        estado_cita_id = estadodao.guardarEstado_cita(descripcion)
+        if estado_cita_id is not None:
             return jsonify({
                 'success': True,
-                'data': {'id': servicio_id, 'descripcion': descripcion},
+                'data': {'id_estado_cita': estado_cita_id, 'descripcion': descripcion},
                 'error': None
             }), 201
         else:
-            return jsonify({ 'success': False, 'error': 'No se pudo guardar el servicio. Consulte con el administrador.' }), 500
+            return jsonify({'success': False, 'error': 'No se pudo guardar el estado_cita. Consulte con el administrador.'}), 500
     except Exception as e:
-        app.logger.error(f"Error al agregar servicio: {str(e)}")
+        app.logger.error(f"Error al agregar estado_cita: {str(e)}")
         return jsonify({
             'success': False,
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
 
-@serapi.route('/servicios/<int:servicio_id>', methods=['PUT'])
-def updateServicio(servicio_id):
+# Actualiza un estado_cita
+@estadoapi.route('/estado_citas/<int:estado_cita_id>', methods=['PUT'])
+def updateEstado_cita(estado_cita_id):
     data = request.get_json()
-    serdao = ServicioDao()
+    estadodao = Estado_citaDao()  # Cambié estdao por estadodao
 
     # Validar que el JSON no esté vacío y tenga las propiedades necesarias
     campos_requeridos = ['descripcion']
@@ -102,44 +104,45 @@ def updateServicio(servicio_id):
                             }), 400
     descripcion = data['descripcion']
     try:
-        if serdao.updateServicio(servicio_id, descripcion.upper()):
+        if estadodao.updateEstado_cita(estado_cita_id, descripcion.upper()):
             return jsonify({
                 'success': True,
-                'data': {'id': servicio_id, 'descripcion': descripcion},
+                'data': {'id_estado_cita': estado_cita_id, 'descripcion': descripcion},
                 'error': None
             }), 200
         else:
             return jsonify({
                 'success': False,
-                'error': 'No se encontró la servicio con el ID proporcionado o no se pudo actualizar.'
+                'error': 'No se encontró el estado_cita con el ID proporcionado o no se pudo actualizar.'
             }), 404
     except Exception as e:
-        app.logger.error(f"Error al actualizar servicio: {str(e)}")
+        app.logger.error(f"Error al actualizar estado_cita: {str(e)}")
         return jsonify({
             'success': False,
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
 
-@serapi.route('/servicios/<int:servicio_id>', methods=['DELETE'])
-def deleteServicio(servicio_id):
-    serdao = ServicioDao()
+# Elimina un estado_cita
+@estadoapi.route('/estado_citas/<int:estado_cita_id>', methods=['DELETE'])
+def deleteEstado_cita(estado_cita_id):
+    estadodao = Estado_citaDao()  # Cambié estdao por estadodao
 
     try:
-        # Usar el retorno de eliminarCiudad para determinar el éxito
-        if serdao.deleteServicio(servicio_id):
+        # Usar el retorno de eliminarEstado_cita para determinar el éxito
+        if estadodao.deleteEstado_cita(estado_cita_id):
             return jsonify({
                 'success': True,
-                'mensaje': f'Servicio con ID {servicio_id} eliminada correctamente.',
+                'mensaje': f'estado_cita con ID {estado_cita_id} eliminada correctamente.',
                 'error': None
             }), 200
         else:
             return jsonify({
                 'success': False,
-                'error': 'No se encontró el servicio con el ID proporcionado o no se pudo eliminar.'
+                'error': 'No se encontró el estado_cita con el ID proporcionado o no se pudo eliminar.'
             }), 404
 
     except Exception as e:
-        app.logger.error(f"Error al eliminar servicio: {str(e)}")
+        app.logger.error(f"Error al eliminar estado_cita: {str(e)}")
         return jsonify({
             'success': False,
             'error': 'Ocurrió un error interno. Consulte con el administrador.'

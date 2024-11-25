@@ -29,7 +29,6 @@ Turnos
 
  <!-- El formulario -->
  <div class="modal" id="modalFormulario">
-  <!-- La clase modal-dialog-centered centra el modal -->
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
     
@@ -81,8 +80,8 @@ Turnos
       columns: [
         { data: 'descripcion' },
         { data: function(row) {
-            return `<button type="button" name="btn_editar" class="btn btn-primary" data-id="${row.id}">Editar</button>
-                    <button type="button" name="btn_eliminar" class="btn btn-danger" data-id="${row.id}">Eliminar</button>`
+            return `<button type="button" name="btn_editar" class="btn btn-primary" data-id="${row.id_turno}">Editar</button>
+                    <button type="button" name="btn_eliminar" class="btn btn-danger" data-id="${row.id_turno}">Eliminar</button>`;
           }
         }
       ]
@@ -91,10 +90,8 @@ Turnos
 
   const agregar = () => {
     $('#btnAgregar').on('click', function(){
-      // Setear un título a modal
       $('#modalTitle').text("Agregar Turno");
-      // inicia ventana modal
-      $('#txtIdaTurno').val("");
+      $('#txtIdTurno').val("");
       $('#txtDescripcion').val("");
       $('#modalFormulario').modal();
     });
@@ -112,7 +109,8 @@ Turnos
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
-          }, body: JSON.stringify({ descripcion: nuevaDescripcion})
+          }, 
+          body: JSON.stringify({ descripcion: nuevaDescripcion })
         })
         .then(resp => resp.json())
         .then(data => {
@@ -132,13 +130,14 @@ Turnos
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
-          }, body: JSON.stringify({ descripcion: nuevaDescripcion})
+          }, 
+          body: JSON.stringify({ descripcion: nuevaDescripcion })
         })
         .then(resp => resp.json())
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "El Turno a sido agregado correctamente.", "success");
+            Swal.fire("Agregado", "El Turno ha sido agregado correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }
@@ -153,27 +152,22 @@ Turnos
   }
 
   const editar = () => {
-    $('#tbl').on('click', 'button[name="btn_editar"]',function(){
-      // Mostrar mensaje de confirmación usando sweetalert
+    $('#tbl').on('click', 'button[name="btn_editar"]', function(){
       Swal.fire({
         title: "¿Deseas editar este registro?",
         showCancelButton: true,
-        confirmButtonText: "Si",
-        cancelButtonText: `No`
+        confirmButtonText: "Sí",
+        cancelButtonText: "No"
       }).then((result) => {
         if (result.isConfirmed) {
-          //Swal.fire("Saved!", "", "success");
           $('#modalTitle').text("Editar un Turno");
 
           const idTurno = $(this).data('id');
           $('#txtIdTurno').val(idTurno);
 
-          // Necesitamos obtener la descripción del backend
           fetch(`/api/v1/turnos/${idTurno}`, {
             method: 'GET',
-            headers: {
-              'Content-Type': 'application/json'
-            }
+            headers: { 'Content-Type': 'application/json' }
           })
           .then(resp => resp.json())
           .then(data => {
@@ -186,39 +180,34 @@ Turnos
   }
 
   const eliminar = () => {
-    $('#tbl').on('click', 'button[name="btn_eliminar"]',function(){
+    $('#tbl').on('click', 'button[name="btn_eliminar"]', function(){
       const idTurno = $(this).data('id');
-      // Mostrar mensaje de confirmación usando sweetalert
       Swal.fire({
         title: "¿Deseas eliminar este registro?",
         showCancelButton: true,
-        confirmButtonText: "Si",
-        cancelButtonText: `No`
+        confirmButtonText: "Sí",
+        cancelButtonText: "No"
       }).then((result) => {
         if (result.isConfirmed) {
           fetch(`/api/v1/turnos/${idTurno}`, {
             method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json'
-            }
+            headers: { 'Content-Type': 'application/json' }
           })
           .then(resp => resp.json())
           .then(data => {
             if(data && !data.error && data.success) {
-              // Para borrar la fila del datatable(cliente)
-              const fila =$(this).closest('tr');
+              const fila = $(this).closest('tr');
               const tabla = $('#tbl').DataTable();
               tabla.row(fila).remove().draw();
-              Swal.fire("Eliminado", "", data.success);
+              Swal.fire("Eliminado", "El Turno ha sido eliminado correctamente.", "success");
             } else {
               Swal.fire(data.error);
             }
           }).catch(err => {
-            Swal.fire("Error", "Ocurrió un error al eliminar Turno.", "error");
+            Swal.fire("Error", "Ocurrió un error al eliminar el Turno.", "error");
           });
         }
       });
-
     });
   }
 

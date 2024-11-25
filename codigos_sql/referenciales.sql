@@ -1,53 +1,58 @@
-CREATE TABLE ciudades (
-    id serial PRIMARY KEY,
-    descripcion varchar(60)
-);
-
 CREATE TABLE
-	paises(
-		id serial PRIMARY KEY
+	ciudades(
+		id_ciudad serial PRIMARY KEY
 		, descripcion varchar(60) UNIQUE
 	);
-
-CREATE TABLE personas (
-    id SERIAL PRIMARY KEY,
-    nombre VARCHAR(255),
-    apellido VARCHAR(255),
-    cedula VARCHAR(50)
-); 
-
+ 
 CREATE TABLE
 	generos(
-		id serial PRIMARY KEY
+		id_genero serial PRIMARY KEY
 		, descripcion varchar(60) UNIQUE
 	);
 
 CREATE TABLE
 	estado_civiles(
-		id serial PRIMARY KEY
+		id_estado_civil serial PRIMARY KEY
 		, descripcion varchar(60) UNIQUE
 	);
  
 CREATE TABLE
 	ocupaciones(
-		id serial PRIMARY KEY
+		id_ocupacion serial PRIMARY KEY
 		, descripcion varchar(60) UNIQUE
 	);
 
-CREATE TABLE medicos (
-    id SERIAL PRIMARY KEY,
-    nombre VARCHAR(255),
-    apellido VARCHAR(255),
-    especialidad VARCHAR(50)
-);
 
-CREATE TABLE pacientes (
-    id SERIAL PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    edad INT NOT NULL CHECK (edad >= 0),  -- Asegura que la edad no sea negativa
-    peso DECIMAL(5, 2) NOT NULL CHECK (peso >= 0),  -- Asegura que el peso no sea negativo
-    altura DECIMAL(5, 2) NOT NULL CHECK (altura >= 0)  -- Asegura que la altura no sea negativa
-);
+CREATE TABLE 
+	personas(
+   		id_persona serial PRIMARY KEY NOT NULL,
+   		nombre VARCHAR(255),
+		apellido VARCHAR(255),
+    	cedula  TEXT NOT NULL,
+    	id_genero INTEGER NOT NULL,
+    	id_estado_civil INTEGER NOT NULL,
+		telefono_emergencia TEXT NOT NULL,
+	    id_ciudad INTEGER NOT NULL,
+    	FOREIGN KEY(id_genero) REFERENCES generos(id_genero)
+		ON DELETE RESTRICT ON UPDATE CASCADE,
+    	FOREIGN KEY(id_estado_civil) REFERENCES estado_civiles(id_estado_civil)
+		ON DELETE RESTRICT ON UPDATE CASCADE,
+		FOREIGN KEY(id_ciudad) REFERENCES ciudades(id_ciudad)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+	); 
+
+CREATE TABLE
+	especialidades(
+		id_especialidad serial PRIMARY KEY
+		, descripcion varchar(60) UNIQUE
+	);
+
+CREATE TABLE
+	medicos(
+		id_medico INTEGER PRIMARY KEY NOT NULL,
+		FOREIGN KEY(id_medico) REFERENCES personas(id_persona)
+    	ON DELETE RESTRICT ON UPDATE CASCADE
+	);
 
 CREATE TABLE
 	enfermedades(
@@ -56,37 +61,69 @@ CREATE TABLE
 	);
 
 CREATE TABLE
+ pacientes (
+		id_paciente INTEGER PRIMARY KEY NOT NULL,
+		 id_ocupacion INTEGER NOT NULL,
+    	edad TEXT NOT NULL,
+		posee_ficha_medica VARCHAR(2) CHECK (posee_ficha_medica IN ('Sí', 'No')),
+   		peso DECIMAL(5, 2) NOT NULL CHECK (peso >= 0),  -- Asegura que el peso no sea negativo
+    	altura DECIMAL(5, 2) NOT NULL CHECK (altura >= 0),  -- Asegura que la altura no sea negativa
+		FOREIGN KEY(id_paciente) REFERENCES personas(id_persona)
+    	ON DELETE RESTRICT ON UPDATE CASCADE,
+		FOREIGN KEY(id_ocupacion) REFERENCES ocupaciones(id_ocupacion)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+	);
+
+CREATE TABLE
 	dias(
-		id serial PRIMARY KEY
+		id_dia serial PRIMARY KEY
 		, descripcion varchar(60) UNIQUE
 	);	
-
-CREATE TABLE
-	horas(
-		id serial PRIMARY KEY
-		, descripcion varchar(60) UNIQUE
-	);		
-
+		
 CREATE TABLE
 	turnos(
-		id serial PRIMARY KEY
+		id_turno serial PRIMARY KEY
+		, descripcion varchar(60) UNIQUE
+	);
+
+
+CREATE TABLE
+	agenda_medicas(
+		id_agenda_medica INTEGER PRIMARY KEY NOT NULL,
+		id_medico INTEGER NOT NULL,
+		id_especialidad INTEGER NOT NULL,
+   		id_dia INTEGER NOT NULL,
+    	id_turno INTEGER NOT NULL,
+		sala_de_atencion TEXT NOT NULL,
+		estado_laboral TEXT NOT NULL,
+		FOREIGN KEY(id_medico) REFERENCES medicos(id_medico)
+		ON DELETE RESTRICT ON UPDATE CASCADE,
+		FOREIGN KEY(id_especialidad) REFERENCES especialidades(id_especialidad)
+		ON DELETE RESTRICT ON UPDATE CASCADE,
+    	FOREIGN KEY(id_dia) REFERENCES dias(id_dia)
+		ON DELETE RESTRICT ON UPDATE CASCADE,
+    	FOREIGN KEY(id_turno) REFERENCES turnos(id_turno)
+		ON DELETE RESTRICT ON UPDATE CASCADE
+	);
+
+CREATE TABLE
+	estado_citas(
+		id_estado_cita INTEGER PRIMARY KEY NOT NULL
 		, descripcion varchar(60) UNIQUE
 	);
 
 CREATE TABLE
-	servicios(
-		id serial PRIMARY KEY
-		, descripcion varchar(60) UNIQUE
-	);
-
-CREATE TABLE
-	tipo_pagos(
-		id serial PRIMARY KEY
-		, descripcion varchar(60) UNIQUE
-	);
-
-CREATE TABLE
-	departamentos(
-		id serial PRIMARY KEY
-		, descripcion varchar(60) UNIQUE
+	citas(
+		id_cita INTEGER  PRIMARY KEY NOT NULL,
+		id_agenda_medica INTEGER NOT NULL,
+		id_paciente INTEGER NOT NULL,
+		hora TIME NOT NULL, 
+		Aviso_recordatorio TEXT NOT NULL,
+		id_estado_cita INTEGER NOT NULL,
+		FOREIGN KEY(id_agenda_medica) REFERENCES agenda_medicas(id_agenda_medica)
+		ON DELETE RESTRICT ON UPDATE CASCADE,
+		FOREIGN KEY(id_paciente) REFERENCES pacientes(id_paciente)
+		ON DELETE RESTRICT ON UPDATE CASCADE,
+		FOREIGN KEY(id_estado_cita) REFERENCES estado_citas(id_estado_cita)
+		ON DELETE RESTRICT ON UPDATE CASCADE
 	);

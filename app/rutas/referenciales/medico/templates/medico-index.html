@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block titulo %}
-Medicos
+Médicos
 {% endblock %}
 
 {% block contenido %}
@@ -19,7 +19,7 @@ Medicos
             <tr>
               <th>Nombre:</th>
               <th>Apellido:</th>
-              <th>Especialidad:</th>
+              <th>Matrícula:</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -43,12 +43,11 @@ Medicos
           <div class="modal-body">
             <div class="form-group">
               <input type="hidden" id="txtIdMedico">
-              <label for="txtNombre">Nombre:</label>
-              <input type="text" class="form-control" placeholder="Ingrese el nombre" id="txtNombre">
-              <label for="txtApellido">Apellido:</label>
-              <input type="text" class="form-control" placeholder="Ingrese el apellido" id="txtApellido">
-              <label for="txtEspecialidad">Especialidad:</label>
-              <input type="text" class="form-control" placeholder="Ingrese la especialidad" id="txtEspecialidad">
+              <input type="hidden" id="id_persona">
+              <label for="txtPersona">Médico:</label>
+              <input type="text" class="form-control" placeholder="clik para buscar médico" id="txtPersona"> 
+              <label for="txtMatricula">Matrícula:</label>
+              <input type="text" class="form-control" placeholder="Ingrese la Matrícula" id="txtMatricula">
             </div>
           </div>
 
@@ -56,6 +55,31 @@ Medicos
           <div class="modal-footer">
             <button type="button" class="btn btn-primary" id="btnGuardar">Guardar</button>
             <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="modalBuscarPersona">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title" id="modalPersonaTitle">Seleccionar Médico</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-striped" id="tblPersona">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -83,13 +107,44 @@ Medicos
       columns: [
         { data: 'nombre' },
         { data: 'apellido' },
-        { data: 'especialidad' },
+        { data: 'matricula' },
         { data: function(row) {
-            return `<button type="button" name="btn_editar" class="btn btn-primary" data-id="${row.id}">Editar</button>
-                    <button type="button" name="btn_eliminar" class="btn btn-danger" data-id="${row.id}">Eliminar</button>`;
+            return `<button type="button" name="btn_editar" class="btn btn-primary" data-id="${row.id_medico}">Editar</button>
+                    <button type="button" name="btn_eliminar" class="btn btn-danger" data-id="${row.id_medico}">Eliminar</button>`;
           }
         }
       ]
+    });
+  }
+
+  const initDatatablep= () => {
+    $('#tblPersona').DataTable({
+      language: {
+        url: "{{ url_for('static', filename='vendor/datatables/es-ES.json') }}",
+      },
+      ajax:'/api/v1/personas',
+      columns: [
+        { data: 'nombre' },
+        { data: 'apellido' },
+        { data: function(row) {
+            return `<button type="button" name="btn_seleccionar_persona" class="fa fa-chek" data-id="${row.id_persona}" data-nombre="${row.persona}">Selecionar</button>`;
+          }
+        }
+      ]
+    });
+    $('#tblPersona').on('click', 'button[name="btn_seleccionar_persona"]', function () {
+      const idPersona = $(this).data('id');
+      const persona = $(this).data('nombre');
+      $('#txtPersona').val(persona);
+      $('#id_persona').val(idPersona);
+      $('#modalBuscarPersona').modal('hide');
+    });
+  }
+
+  const buscarPersona = () => {
+    $('#txtPersona').on('click', function () {
+      $('#modalPersonaTitle').text("Seleccionar médico");
+      $('#modalBuscarPersona').modal();
     });
   }
 
@@ -97,9 +152,9 @@ Medicos
     $('#btnAgregar').on('click', function(){
       $('#modalTitle').text("Agregar Médico");
       $('#txtIdMedico').val("");
-      $('#txtNombre').val("");
-      $('#txtApellido').val("");
-      $('#txtEspecialidad').val("");
+      $('#id_persona').val("");
+      $('#txtPersona').val("");
+      $('#txtMatricula').val("");
       $('#modalFormulario').modal();
     });
   }
@@ -107,9 +162,8 @@ Medicos
   const guardar = () => {
     $('#btnGuardar').on('click', function() {
       const idMedico = $('#txtIdMedico').val();
-      const nuevoNombre = $('#txtNombre').val();
-      const nuevoApellido = $('#txtApellido').val();
-      const nuevaEspecialidad = $('#txtEspecialidad').val();
+      const id_persona = $('#id_persona').val();
+      const nuevoMatricula = $('#txtMatricula').val();
       const tabla = $('#tbl').DataTable();
 
       if(idMedico) {
@@ -118,7 +172,7 @@ Medicos
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
-          }, body: JSON.stringify({ nombre: nuevoNombre, apellido: nuevoApellido, especialidad: nuevaEspecialidad })
+          }, body: JSON.stringify({ id_persona: id_persona, matricula: nuevoMatricula })
         })
         .then(resp => resp.json())
         .then(data => {
@@ -138,7 +192,7 @@ Medicos
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
-          }, body: JSON.stringify({ nombre: nuevoNombre, apellido: nuevoApellido, especialidad: nuevaEspecialidad })
+          }, body: JSON.stringify({ id_persona: id_persona, matricula: nuevoMatricula })
         })
         .then(resp => resp.json())
         .then(data => {
@@ -180,9 +234,9 @@ Medicos
           })
           .then(resp => resp.json())
           .then(data => {
-            $('#txtNombre').val(data.data.nombre);
-            $('#txtApellido').val(data.data.apellido);
-            $('#txtEspecialidad').val(data.data.especialidad);
+            $('#txtPersona').val(data.data.medico);
+            $('#id_persona').val(data.data.id_persona);
+            $('#txtMatricula').val(data.data.matricula);
             $('#modalFormulario').modal();
           });
         }
@@ -229,9 +283,11 @@ Medicos
     guardar();
     editar();
     eliminar();
+    buscarPersona();
   }
 
   $(function() {
+    initDatatable();
     initDatatable();
     addEvents();
   }); 

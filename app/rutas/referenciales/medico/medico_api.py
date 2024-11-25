@@ -29,7 +29,7 @@ def getMedico(medico_id):
     medicodao = MedicoDao()
 
     try:
-        medico = medicodao.getMedicoById(medico_id)
+        medico = medicodao.getMedicosById(medico_id)
 
         if medico:
             return jsonify({
@@ -57,7 +57,7 @@ def addMedico():
     medicodao = MedicoDao()
 
     # Validar que el JSON no esté vacío y tenga las propiedades necesarias
-    campos_requeridos = ['nombre', 'apellido', 'especialidad']
+    campos_requeridos = ['id_persona','matricula']
 
     # Verificar si faltan campos o son vacíos
     for campo in campos_requeridos:
@@ -68,15 +68,14 @@ def addMedico():
             }), 400
 
     try:
-        nombre = data['nombre'].upper()
-        apellido = data['apellido'].upper()
-        especialidad = data['especialidad'].upper()
+        id_persona = data['id_persona'].upper()
+        matricula = data['matricula'].upper()
 
-        medico_id = medicodao.guardarMedico(nombre, apellido, especialidad)
+        medico_id = medicodao.guardarMedico(id_persona, matricula)
         if medico_id is not None:
             return jsonify({
                 'success': True,
-                'data': {'id': medico_id, 'nombre': nombre, 'apellido': apellido, 'especialidad': especialidad},
+                'data': {'id_medico': medico_id,'id_persona': id_persona, 'matricula': matricula},
                 'error': None
             }), 201
         else:
@@ -94,7 +93,7 @@ def updateMedico(medico_id):
     medicodao = MedicoDao()
 
     # Validar que el JSON no esté vacío y tenga las propiedades necesarias
-    campos_requeridos = ['nombre', 'apellido', 'especialidad']
+    campos_requeridos = ['id_persona','matricula']
 
     # Verificar si faltan campos o son vacíos
     for campo in campos_requeridos:
@@ -105,14 +104,13 @@ def updateMedico(medico_id):
             }), 400
 
     try:
-        nombre = data['nombre'].upper()
-        apellido = data['apellido'].upper()
-        especialidad = data['especialidad'].upper()
+        id_persona = data['id_persona']
+        matricula = data['matricula'].upper()
 
-        if medicodao.updateMedico(medico_id, nombre, apellido, especialidad):
+        if medicodao.updateMedico(medico_id, id_persona, matricula):
             return jsonify({
                 'success': True,
-                'data': {'id': medico_id, 'nombre': nombre, 'apellido': apellido, 'especialidad': especialidad},
+                'data': {'id_medico': medico_id, 'id_persona': id_persona, 'matricula': matricula},
                 'error': None
             }), 200
         else:

@@ -2,65 +2,65 @@
 from flask import current_app as app
 from app.conexion.Conexion import Conexion
 
-class GeneroDao:
+class Estado_citaDao:
 
-    def getGeneros(self):
+    def getEstado_citas(self):
 
-        generoSQL = """
-        SELECT id_genero, descripcion
-        FROM generos
+        estado_citaSQL = """
+        SELECT id_estado_cita, descripcion
+        FROM estado_citas
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(generoSQL)
-            generos = cur.fetchall()  # trae datos de la bd
+            cur.execute(estado_citaSQL)
+            estado_citas = cur.fetchall()  # trae datos de la bd
 
             # Transformar los datos en una lista de diccionarios
-            return [{'id_genero': genero[0], 'descripcion': genero[1]} for genero in generos]
+            return [{'id_estado_cita': estado_cita[0], 'descripcion': estado_cita[1]} for estado_cita in estado_citas]
 
         except Exception as e:
-            app.logger.error(f"Error al obtener todos los generos: {str(e)}")
+            app.logger.error(f"Error al obtener todos los estado_citas: {str(e)}")
             return []
 
         finally:
             cur.close()
             con.close()
 
-    def getGeneroById(self, id_genero):
+    def getEstado_citaById(self, id):
 
-        generoSQL = """
-        SELECT id_genero, descripcion
-        FROM generos WHERE id_genero=%s
+        estado_citaSQL = """
+        SELECT id_estado_cita, descripcion
+        FROM estado_citas WHERE id_estado_cita=%s
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(generoSQL, (id_genero,))
-            generoEncontrada = cur.fetchone()  # Obtener una sola fila
-            if generoEncontrada:
+            cur.execute(estado_citaSQL, (id,))
+            estado_citaEncontrada = cur.fetchone()  # Obtener una sola fila
+            if estado_citaEncontrada:
                 return {
-                        "id_genero": generoEncontrada[0],
-                        "descripcion": generoEncontrada[1]
-                    }  # Retornar los datos de la ciudad
+                    "id_estado_cita": estado_citaEncontrada[0],
+                    "descripcion": estado_citaEncontrada[1]
+                }  # Retornar los datos de la estado_cita
             else:
-                return None  # Retornar None si no se encuentra la ciudad
+                return None  # Retornar None si no se encuentra la estado_cita
         except Exception as e:
-            app.logger.error(f"Error al obtener genero: {str(e)}")
+            app.logger.error(f"Error al obtener estado_cita: {str(e)}")
             return None
 
         finally:
             cur.close()
             con.close()
 
-    def guardarGenero(self, descripcion):
+    def guardarEstado_cita(self, descripcion):
 
-        insertGeneroSQL = """
-        INSERT INTO generos(descripcion) VALUES(%s) RETURNING id_genero        
+        insertEstado_citaSQL = """
+        INSERT INTO estado_citas(descripcion) VALUES(%s) RETURNING id_estado_cita        
         """
 
         conexion = Conexion()
@@ -69,14 +69,14 @@ class GeneroDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(insertGeneroSQL, (descripcion,))
-            genero_id = cur.fetchone()[0]
+            cur.execute(insertEstado_citaSQL, (descripcion,))
+            estado_cita = cur.fetchone()[0]
             con.commit()  # se confirma la insercion
-            return genero_id
+            return estado_cita
 
         # Si algo fallo entra aqui
         except Exception as e:
-            app.logger.error(f"Error al insertar genero: {str(e)}")
+            app.logger.error(f"Error al insertar estado_cita: {str(e)}")
             con.rollback()  # retroceder si hubo error
             return False
 
@@ -85,12 +85,12 @@ class GeneroDao:
             cur.close()
             con.close()
 
-    def updateGenero(self, id_genero, descripcion):
+    def updateEstado_cita(self, id_estado_cita, descripcion):
 
-        updateGeneroSQL = """
-        UPDATE generos
+        updateEstado_citaSQL = """
+        UPDATE estado_citas
         SET descripcion=%s
-        WHERE id_genero=%s
+        WHERE id_estado_cita=%s
         """
 
         conexion = Conexion()
@@ -98,14 +98,14 @@ class GeneroDao:
         cur = con.cursor()
 
         try:
-            cur.execute(updateGeneroSQL, (descripcion, id_genero,))
+            cur.execute(updateEstado_citaSQL, (descripcion, id_estado_cita,))
             filas_afectadas = cur.rowcount  # Obtener el número de filas afectadas
             con.commit()
 
             return filas_afectadas > 0  # Retornar True si se actualizó al menos una fila
 
         except Exception as e:
-            app.logger.error(f"Error al actualizar genero: {str(e)}")
+            app.logger.error(f"Error al actualizar estado_cita: {str(e)}")
             con.rollback()
             return False
 
@@ -113,11 +113,11 @@ class GeneroDao:
             cur.close()
             con.close()
 
-    def deleteGenero(self, id_genero):
+    def deleteEstado_cita(self, id_estado_cita):
 
-        deleteGeneroSQL = """
-        DELETE FROM generos
-        WHERE id_genero=%s
+        deleteEstado_citaSQL = """
+        DELETE FROM estado_citas
+        WHERE id_estado_cita=%s
         """
 
         conexion = Conexion()
@@ -126,13 +126,13 @@ class GeneroDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(deleteGeneroSQL, (id_genero,))
+            cur.execute(deleteEstado_citaSQL, (id_estado_cita,))
             rows_affected = cur.rowcount
             con.commit()
 
             return rows_affected > 0  # Retornar True si se eliminó al menos una fila
         except Exception as e:
-            app.logger.error(f"Error al eliminar genero: {str(e)}")
+            app.logger.error(f"Error al eliminar estado_cita: {str(e)}")
             con.rollback()
             return False
 

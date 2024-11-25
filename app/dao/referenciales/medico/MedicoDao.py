@@ -5,8 +5,9 @@ class MedicoDao:
 
     def getMedicos(self):
         medicoSQL = """
-        SELECT id, nombre, apellido, especialidad
-        FROM medicos
+        SELECT m.id_medico, p.nombre, p.apellido, m.matricula, p.id_persona
+        FROM medicos m, personas p
+        where m.id_persona=p.id_persona
         """
         conexion = Conexion()
         con = conexion.getConexion()
@@ -16,7 +17,7 @@ class MedicoDao:
             medicos = cur.fetchall()
 
             # Transformar los datos en una lista de diccionarios con los nuevos campos
-            return [{'id': medico[0], 'nombre': medico[1], 'apellido': medico[2], 'especialidad': medico[3]} for medico in medicos]
+            return [{'id_medico': medico[0], 'nombre': medico[1], 'apellido': medico[2],'matricula': medico[3], 'id_persona': medico[4] } for medico in medicos]
 
         except Exception as e:
             app.logger.error(f"Error al obtener todos los medicos: {str(e)}")
@@ -28,8 +29,9 @@ class MedicoDao:
 
     def getMedicoById(self, id):
         medicoSQL = """
-        SELECT id, nombre, apellido, especialidad
-        FROM medicos WHERE id=%s
+        SELECT m.id_medico, p.nombre, p.apellido, m.matricula, p.id_persona
+        FROM medicos m, personas p
+        WHERE m.id_persona=p.id_persona and m.id_medico=%s
         """
         conexion = Conexion()
         con = conexion.getConexion()
@@ -39,10 +41,11 @@ class MedicoDao:
             medicoEncontrado = cur.fetchone()
             if medicoEncontrado:
                 return {
-                    "id": medicoEncontrado[0],
+                    "id_medico": medicoEncontrado[0],
                     "nombre": medicoEncontrado[1],
                     "apellido": medicoEncontrado[2],
-                    "especialidad": medicoEncontrado[3]
+                    "matricula": medicoEncontrado[3],
+                    "id_persona": medicoEncontrado[4]
                 }
             else:
                 return None
@@ -54,16 +57,16 @@ class MedicoDao:
             cur.close()
             con.close()
 
-    def guardarMedico(self, nombre, apellido, especialidad):
+    def guardarMedico(self,matricula, id_pesona):
         insertMedicoSQL = """
-        INSERT INTO medicos(nombre, apellido, especialidad) VALUES(%s, %s, %s) RETURNING id
+        INSERT INTO medicos(matricula, id_pesona) VALUES(%s, %s) RETURNING id_medico
         """
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
 
         try:
-            cur.execute(insertMedicoSQL, (nombre, apellido, especialidad))
+            cur.execute(insertMedicoSQL, (matricula, id_pesona))
             medico_id = cur.fetchone()[0]
             con.commit()
             return medico_id
@@ -77,18 +80,18 @@ class MedicoDao:
             cur.close()
             con.close()
 
-    def updateMedico(self, id, nombre, apellido, especialidad):
+    def updateMedico(self, id_medico, matricula, id_pesona):
         updateMedicoSQL = """
         UPDATE medicos
-        SET nombre=%s, apellido=%s, especialidad=%s
-        WHERE id=%s
+        SET  matricula=%s, id_pesona=%s
+        WHERE id_medico=%s
         """
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
 
         try:
-            cur.execute(updateMedicoSQL, (nombre, apellido, especialidad, id))
+            cur.execute(updateMedicoSQL, (id_medico, matricula, id_pesona))
             filas_afectadas = cur.rowcount
             con.commit()
             return filas_afectadas > 0
@@ -102,17 +105,17 @@ class MedicoDao:
             cur.close()
             con.close()
 
-    def deleteMedico(self, id):
+    def deleteMedico(self, id_medico):
         deleteMedicoSQL = """
         DELETE FROM medicos
-        WHERE id=%s
+        WHERE id_medico=%s
         """
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
 
         try:
-            cur.execute(deleteMedicoSQL, (id,))
+            cur.execute(deleteMedicoSQL, (id_medico,))
             rows_affected = cur.rowcount
             con.commit()
 

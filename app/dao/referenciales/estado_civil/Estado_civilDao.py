@@ -7,7 +7,7 @@ class Estado_civilDao:
     def getEstado_civiles(self):
 
         estado_civilSQL = """
-        SELECT id, descripcion
+        SELECT id_estado_civil, descripcion
         FROM estado_civiles
         """
         # objeto conexion
@@ -19,7 +19,7 @@ class Estado_civilDao:
             estado_civiles = cur.fetchall() # trae datos de la bd
 
             # Transformar los datos en una lista de diccionarios
-            return [{'id': estado_civil[0], 'descripcion': estado_civil[1]} for estado_civil in estado_civiles]
+            return [{'id_estado_civil': estado_civil[0], 'descripcion': estado_civil[1]} for estado_civil in estado_civiles]
 
         except Exception as e:
             app.logger.error(f"Error al obtener todos los estado_civiles: {str(e)}")
@@ -32,8 +32,8 @@ class Estado_civilDao:
     def getEstado_civilById(self, id):
 
         estado_civilSQL = """
-        SELECT id, descripcion
-        FROM estado_civiles WHERE id=%s
+        SELECT id_estado_civil, descripcion
+        FROM estado_civiles WHERE id_estado_civil=%s
         """
         # objeto conexion
         conexion = Conexion()
@@ -44,11 +44,11 @@ class Estado_civilDao:
             estado_civilEncontrada = cur.fetchone() # Obtener una sola fila
             if estado_civilEncontrada:
                 return {
-                        "id": estado_civilEncontrada[0],
+                        "id_estado_civil": estado_civilEncontrada[0],
                         "descripcion": estado_civilEncontrada[1]
-                    }  # Retornar los datos de la medico
+                    }  # Retornar los datos de la estado_civil
             else:
-                return None # Retornar None si no se encuentra la medico
+                return None # Retornar None si no se encuentra la estado_civil
         except Exception as e:
             app.logger.error(f"Error al obtener estado_civil: {str(e)}")
             return None
@@ -60,8 +60,8 @@ class Estado_civilDao:
     def guardarEstado_civil(self, descripcion):
 
         insertEstado_civilSQL = """
-   INSERT INTO estado_civiles(descripcion) VALUES(%s) RETURNING id        
-   """
+        INSERT INTO estado_civiles(descripcion) VALUES(%s) RETURNING id_estado_civil        
+        """
 
         conexion = Conexion()
         con = conexion.getConexion()
@@ -80,7 +80,7 @@ class Estado_civilDao:
             con.rollback() # retroceder si hubo error
             return False
 
-          # Siempre se va ejecutar
+        # Siempre se va ejecutar
         finally:
             cur.close()
             con.close()
@@ -90,7 +90,7 @@ class Estado_civilDao:
         updateEstado_civilSQL = """
         UPDATE estado_civiles
         SET descripcion=%s
-        WHERE id=%s
+        WHERE id_estado_civil=%s
         """
 
         conexion = Conexion()
@@ -99,7 +99,7 @@ class Estado_civilDao:
 
         try:
             cur.execute(updateEstado_civilSQL, (descripcion, id,))
-            filas_afectadas = cur.rowcount # Obtener el número de filas afectadas            con.commit()
+            filas_afectadas = cur.rowcount # Obtener el número de filas afectadas
             con.commit()
         
             return filas_afectadas > 0 # Retornar True si se actualizó al menos una fila
@@ -115,9 +115,9 @@ class Estado_civilDao:
 
     def deleteEstado_civil(self, id):
 
-        updateEstado_civilSQL = """
+        deleteEstado_civilSQL = """
         DELETE FROM estado_civiles
-        WHERE id=%s
+        WHERE id_estado_civil=%s
         """
 
         conexion = Conexion()
@@ -126,7 +126,7 @@ class Estado_civilDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(updateEstado_civilSQL, (id,))
+            cur.execute(deleteEstado_civilSQL, (id,))
             rows_affected = cur.rowcount
             con.commit()
 
@@ -139,4 +139,3 @@ class Estado_civilDao:
         finally:
             cur.close()
             con.close()
-

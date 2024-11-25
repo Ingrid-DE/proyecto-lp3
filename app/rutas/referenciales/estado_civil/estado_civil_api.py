@@ -3,7 +3,7 @@ from app.dao.referenciales.estado_civil.Estado_civilDao import Estado_civilDao
 
 estapi = Blueprint('estapi', __name__)
 
-# Trae todas las ciudades
+# Trae todos los estado_civiles
 @estapi.route('/estado_civiles', methods=['GET'])
 def getEstado_civiles():
     estdao = Estado_civilDao()
@@ -24,6 +24,7 @@ def getEstado_civiles():
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
 
+# Trae un estado_civil por ID
 @estapi.route('/estado_civiles/<int:estado_civil_id>', methods=['GET'])
 def getEstado_civil(estado_civil_id):
     estdao = Estado_civilDao()
@@ -40,17 +41,17 @@ def getEstado_civil(estado_civil_id):
         else:
             return jsonify({
                 'success': False,
-                'error': 'No se encontró al medico con el ID proporcionado.'
+                'error': 'No se encontró el estado_civil con el ID proporcionado.'
             }), 404
 
     except Exception as e:
-        app.logger.error(f"Error al obtener estado_civiles: {str(e)}")
+        app.logger.error(f"Error al obtener estado_civil: {str(e)}")
         return jsonify({
             'success': False,
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
 
-# Agrega una nueva ciudad
+# Agrega un nuevo estado_civil
 @estapi.route('/estado_civiles', methods=['POST'])
 def addestado_civil():
     data = request.get_json()
@@ -73,7 +74,7 @@ def addestado_civil():
         if estado_civil_id is not None:
             return jsonify({
                 'success': True,
-                'data': {'id': estado_civil_id, 'descripcion': descripcion},
+                'data': {'id_estado_civil': estado_civil_id, 'descripcion': descripcion},
                 'error': None
             }), 201
         else:
@@ -85,6 +86,7 @@ def addestado_civil():
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
 
+# Actualiza un estado_civil
 @estapi.route('/estado_civiles/<int:estado_civil_id>', methods=['PUT'])
 def updateEstado_civil(estado_civil_id):
     data = request.get_json()
@@ -105,13 +107,13 @@ def updateEstado_civil(estado_civil_id):
         if estdao.updateEstado_civil(estado_civil_id, descripcion.upper()):
             return jsonify({
                 'success': True,
-                'data': {'id':estado_civil_id, 'descripcion': descripcion},
+                'data': {'id_estado_civil': estado_civil_id, 'descripcion': descripcion},
                 'error': None
             }), 200
         else:
             return jsonify({
                 'success': False,
-                'error': 'No se encontró al estado_civil con el ID proporcionado o no se pudo actualizar.'
+                'error': 'No se encontró el estado_civil con el ID proporcionado o no se pudo actualizar.'
             }), 404
     except Exception as e:
         app.logger.error(f"Error al actualizar estado_civil: {str(e)}")
@@ -120,12 +122,13 @@ def updateEstado_civil(estado_civil_id):
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
 
+# Elimina un estado_civil
 @estapi.route('/estado_civiles/<int:estado_civil_id>', methods=['DELETE'])
 def deleteEstado_civil(estado_civil_id):
     estdao = Estado_civilDao()
 
     try:
-        # Usar el retorno de eliminarCiudad para determinar el éxito
+        # Usar el retorno de eliminarEstado_civil para determinar el éxito
         if estdao.deleteEstado_civil(estado_civil_id):
             return jsonify({
                 'success': True,
@@ -135,7 +138,7 @@ def deleteEstado_civil(estado_civil_id):
         else:
             return jsonify({
                 'success': False,
-                'error': 'No se encontró al estado_civil con el ID proporcionado o no se pudo eliminar.'
+                'error': 'No se encontró el estado_civil con el ID proporcionado o no se pudo eliminar.'
             }), 404
 
     except Exception as e:

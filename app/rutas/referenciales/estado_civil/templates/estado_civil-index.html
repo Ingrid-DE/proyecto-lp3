@@ -17,7 +17,7 @@ Estado civil
         <table class="table table-striped" id="tbl">
           <thead>
             <tr>
-              <th>Ciudades</th>
+              <th>Estado Civil</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -81,8 +81,8 @@ Estado civil
       columns: [
         { data: 'descripcion' },
         { data: function(row) {
-            return `<button type="button" name="btn_editar" class="btn btn-primary" data-id="${row.id}">Editar</button>
-                    <button type="button" name="btn_eliminar" class="btn btn-danger" data-id="${row.id}">Eliminar</button>`
+            return `<button type="button" name="btn_editar" class="btn btn-primary" data-id="${row.id_estado_civil}">Editar</button>
+                    <button type="button" name="btn_eliminar" class="btn btn-danger" data-id="${row.id_estado_civil}">Eliminar</button>`
           }
         }
       ]
@@ -92,7 +92,7 @@ Estado civil
   const agregar = () => {
     $('#btnAgregar').on('click', function(){
       // Setear un título a modal
-      $('#modalTitle').text("Agregar un estado un civil");
+      $('#modalTitle').text("Agregar un estado civil");
       // inicia ventana modal
       $('#txtIdEstado_civil').val("");
       $('#txtDescripcion').val("");
@@ -118,7 +118,7 @@ Estado civil
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "El Estado civil ha sido actualizado correctamente.", "success");
+            Swal.fire("Actualizado", "El estado civil ha sido actualizado correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }
@@ -138,7 +138,7 @@ Estado civil
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "El estado civil ha sido agregado correctamente.", "success");
+            Swal.fire("Agregado", "El estado civil ha sido agregado correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }
@@ -158,7 +158,7 @@ Estado civil
       Swal.fire({
         title: "¿Deseas editar este registro?",
         showCancelButton: true,
-        confirmButtonText: "Si",
+        confirmButtonText: "Sí",
         cancelButtonText: `No`
       }).then((result) => {
         if (result.isConfirmed) {
@@ -192,7 +192,7 @@ Estado civil
       Swal.fire({
         title: "¿Deseas eliminar este registro?",
         showCancelButton: true,
-        confirmButtonText: "Si",
+        confirmButtonText: "Sí",
         cancelButtonText: `No`
       }).then((result) => {
         if (result.isConfirmed) {

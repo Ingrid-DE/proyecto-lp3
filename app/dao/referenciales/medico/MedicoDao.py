@@ -5,9 +5,10 @@ class MedicoDao:
 
     def getMedicos(self):
         medicoSQL = """
-        SELECT m.id_medico, p.nombre, p.apellido, m.matricula, p.id_persona
-        FROM medicos m, personas p
-        where m.id_persona=p.id_persona
+      SELECT
+        m.id_medico, p.nombre, p.apellido, m.matricula
+            FROM medicos m, personas p
+            where m.id_persona=p.id_persona
         """
         conexion = Conexion()
         con = conexion.getConexion()
@@ -17,7 +18,7 @@ class MedicoDao:
             medicos = cur.fetchall()
 
             # Transformar los datos en una lista de diccionarios con los nuevos campos
-            return [{'id_medico': medico[0], 'nombre': medico[1], 'apellido': medico[2],'matricula': medico[3], 'id_persona': medico[4] } for medico in medicos]
+            return [{'id_medico': medico[0], 'nombre': medico[1], 'apellido': medico[2],'matricula': medico[3]} for medico in medicos]
 
         except Exception as e:
             app.logger.error(f"Error al obtener todos los medicos: {str(e)}")
@@ -27,17 +28,18 @@ class MedicoDao:
             cur.close()
             con.close()
 
-    def getMedicoById(self, id):
+    def getMedicoById(self, id_medico):
         medicoSQL = """
-        SELECT m.id_medico, p.nombre, p.apellido, m.matricula, p.id_persona
-        FROM medicos m, personas p
-        WHERE m.id_persona=p.id_persona and m.id_medico=%s
+         SELECT
+            m.id_medico, p.nombre, p.apellido, m.matricula, p.id_persona
+            FROM medicos m, personas p
+            Where m.id_persona=p.id_persona and m.id_medico=%s
         """
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(medicoSQL, (id,))
+            cur.execute(medicoSQL, (id_medico,))
             medicoEncontrado = cur.fetchone()
             if medicoEncontrado:
                 return {
@@ -57,16 +59,16 @@ class MedicoDao:
             cur.close()
             con.close()
 
-    def guardarMedico(self,matricula, id_pesona):
+    def guardarMedico(self, id_persona,matricula):
         insertMedicoSQL = """
-        INSERT INTO medicos(matricula, id_pesona) VALUES(%s, %s) RETURNING id_medico
+        INSERT INTO medicos(matricula, id_persona) VALUES(%s, %s) RETURNING id_medico
         """
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
 
         try:
-            cur.execute(insertMedicoSQL, (matricula, id_pesona))
+            cur.execute(insertMedicoSQL, (matricula, id_persona))
             medico_id = cur.fetchone()[0]
             con.commit()
             return medico_id
@@ -80,10 +82,10 @@ class MedicoDao:
             cur.close()
             con.close()
 
-    def updateMedico(self, id_medico, matricula, id_pesona):
+    def updateMedico(self, id_medico, id_persona, matricula):
         updateMedicoSQL = """
         UPDATE medicos
-        SET  matricula=%s, id_pesona=%s
+        SET  matricula=%s, id_persona=%s
         WHERE id_medico=%s
         """
         conexion = Conexion()
@@ -91,7 +93,7 @@ class MedicoDao:
         cur = con.cursor()
 
         try:
-            cur.execute(updateMedicoSQL, (id_medico, matricula, id_pesona))
+            cur.execute(updateMedicoSQL, (matricula, id_persona, id_medico))
             filas_afectadas = cur.rowcount
             con.commit()
             return filas_afectadas > 0

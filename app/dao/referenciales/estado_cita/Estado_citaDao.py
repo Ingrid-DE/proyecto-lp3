@@ -29,7 +29,7 @@ class Estado_citaDao:
             cur.close()
             con.close()
 
-    def getEstado_citaById(self, id):
+    def getEstado_citaById(self, id_estado_cita):
 
         estado_citaSQL = """
         SELECT id_estado_cita, descripcion
@@ -40,7 +40,7 @@ class Estado_citaDao:
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(estado_citaSQL, (id,))
+            cur.execute(estado_citaSQL, (id_estado_cita,))
             estado_citaEncontrada = cur.fetchone()  # Obtener una sola fila
             if estado_citaEncontrada:
                 return {

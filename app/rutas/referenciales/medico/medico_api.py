@@ -29,7 +29,7 @@ def getMedico(medico_id):
     medicodao = MedicoDao()
 
     try:
-        medico = medicodao.getMedicosById(medico_id)
+        medico = medicodao.getMedicoById(medico_id)
 
         if medico:
             return jsonify({
@@ -68,7 +68,8 @@ def addMedico():
             }), 400
 
     try:
-        id_persona = data['id_persona'].upper()
+        #print("hola")
+        id_persona = data['id_persona']
         matricula = data['matricula'].upper()
 
         medico_id = medicodao.guardarMedico(id_persona, matricula)

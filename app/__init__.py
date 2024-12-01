@@ -16,6 +16,7 @@ from app.rutas.referenciales.dia.dia_routes import diamod
 from app.rutas.referenciales.hora.hora_routes import hormod
 from app.rutas.referenciales.especialidad.especialidad_routes import espmod
 from app.rutas.referenciales.estado_cita.estado_cita_routes import estdmod
+from app.rutas.referenciales.estado_laboral.estado_laboral_routes import estado_laboralmod
 
 # registrar referenciales
 modulo0 = '/referenciales'
@@ -23,6 +24,10 @@ app.register_blueprint(ciumod, url_prefix=f'{modulo0}/ciudad')
 
 from app.rutas.referenciales.ciudad.ciudad_api import ciuapi
 
+modulo0 = '/referenciales'
+app.register_blueprint(estado_laboralmod, url_prefix=f'{modulo0}/estado_laboral')
+
+from app.rutas.referenciales.estado_laboral.estado_laboral_api import estado_laboralapi
 
 modulo0 = '/referenciales'
 app.register_blueprint(persona_mod, url_prefix=f'{modulo0}/persona')
@@ -88,6 +93,9 @@ from app.rutas.referenciales.estado_cita.estado_cita_api import estadoapi
 # APIS v1
 version1 = '/api/v1'
 app.register_blueprint(ciuapi, url_prefix=version1)
+
+version1 = '/api/v1'
+app.register_blueprint(estado_laboralapi, url_prefix=version1)
 
 app.register_blueprint(personaapi, url_prefix=version1)
 

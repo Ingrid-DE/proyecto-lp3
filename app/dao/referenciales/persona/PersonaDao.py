@@ -29,7 +29,7 @@ class PersonaDao:
             cur.close()
             con.close()
     # TRANSFORMAC CON CTGP PRIMERO MANDAR LA TABLA SQL 
-    def getPersonasById(self, id):
+    def getPersonasById(self, id_persona):
         personaSQL = """
          SELECT
             p.id_persona, p.nombre, p.apellido, p.cedula, g.descripcion, e.descripcion, p.telefono_emergencia, c.descripcion, g.id_genero, e.id_estado_civil, c. id_ciudad 
@@ -40,7 +40,7 @@ class PersonaDao:
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(personaSQL, (id,))
+            cur.execute(personaSQL, (id_persona,))
             personaEncontrada = cur.fetchone()
             if personaEncontrada:
                 return {

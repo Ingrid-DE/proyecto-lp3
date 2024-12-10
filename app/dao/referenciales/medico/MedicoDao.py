@@ -31,7 +31,7 @@ class MedicoDao:
     def getMedicoById(self, id_medico):
         medicoSQL = """
          SELECT
-            m.id_medico, p.nombre, p.apellido, m.matricula, e.descripcion,p.id_persona, e.id_estado_laboral
+            m.id_medico, p.nombre, p.apellido, m.matricula, e.descripcion, p.id_persona, e.id_estado_laboral
             FROM medicos m, personas p, estado_laborales e
             Where m.id_persona=p.id_persona and m.id_estado_laboral=e.id_estado_laboral and m.id_medico=%s
         """
@@ -47,8 +47,8 @@ class MedicoDao:
                     "nombre": medicoEncontrado[1],
                     "apellido": medicoEncontrado[2],
                     "matricula": medicoEncontrado[3],
-                    "id_persona": medicoEncontrado[4],
-                    "descripcion": medicoEncontrado[5],
+                    "descripcion": medicoEncontrado[4],
+                    "id_persona": medicoEncontrado[5],
                     "id_estado_laboral": medicoEncontrado[6]
                 }
             else:
@@ -63,7 +63,7 @@ class MedicoDao:
 
     def guardarMedico(self, id_persona,matricula,id_estado_laboral):
         insertMedicoSQL = """
-        INSERT INTO medicos(id_estado_laboral,matricula, id_persona) VALUES(%s, %s) RETURNING id_medico
+        INSERT INTO medicos(id_estado_laboral,matricula, id_persona) VALUES(%s, %s,%s) RETURNING id_medico
         """
         conexion = Conexion()
         con = conexion.getConexion()
@@ -95,7 +95,7 @@ class MedicoDao:
         cur = con.cursor()
 
         try:
-            cur.execute(updateMedicoSQL, (id_estado_laboral,matricula, id_persona, id_medico))
+            cur.execute(updateMedicoSQL, (matricula,id_persona,id_estado_laboral, id_medico))
             filas_afectadas = cur.rowcount
             con.commit()
             return filas_afectadas > 0

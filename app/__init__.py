@@ -17,6 +17,9 @@ from app.rutas.referenciales.hora.hora_routes import hormod
 from app.rutas.referenciales.especialidad.especialidad_routes import espmod
 from app.rutas.referenciales.estado_cita.estado_cita_routes import estdmod
 from app.rutas.referenciales.estado_laboral.estado_laboral_routes import estado_laboralmod
+from app.rutas.referenciales.ficha.ficha_routes import fichamod
+#from app.rutas.referenciales.agenda_medica.agenda_medica_routes import agendamedmod
+from app.rutas.referenciales.sala_atencion.sala_atencion_routes import salmod
 
 # registrar referenciales
 modulo0 = '/referenciales'
@@ -89,6 +92,20 @@ app.register_blueprint(estdmod, url_prefix=f'{modulo0}/estado_cita')
 
 from app.rutas.referenciales.estado_cita.estado_cita_api import estadoapi
 
+modulo0 = '/referenciales'
+app.register_blueprint(fichamod, url_prefix=f'{modulo0}/ficha')
+
+from app.rutas.referenciales.ficha.ficha_api import fichaapi
+
+#modulo0 = '/referenciales'
+#app.register_blueprint(agendamedmod, url_prefix=f'{modulo0}/agenda_medica')
+
+#from app.rutas.referenciales.agenda_medica.agenda_medica_api import agenda_medica_api
+
+modulo0 = '/referenciales'
+app.register_blueprint(salmod, url_prefix=f'{modulo0}/sala_atencion')
+
+from app.rutas.referenciales.sala_atencion.sala_atencion_api import salapi
 
 # APIS v1
 version1 = '/api/v1'
@@ -120,3 +137,9 @@ app.register_blueprint(horapi, url_prefix=version1)
 app.register_blueprint(espapi, url_prefix=version1)
 
 app.register_blueprint(estadoapi, url_prefix=version1)
+
+app.register_blueprint(fichaapi, url_prefix=version1)
+
+#app.register_blueprint(agenda_medica_api, url_prefix=version1)
+
+app.register_blueprint(salapi, url_prefix=version1)

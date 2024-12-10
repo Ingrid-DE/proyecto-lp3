@@ -11,6 +11,12 @@ CREATE TABLE
 	);
 
 CREATE TABLE
+	fichas(
+		id_ficha serial PRIMARY KEY
+		, descripcion varchar(60) UNIQUE
+	);
+
+CREATE TABLE
 	estado_civiles(
 		id_estado_civil serial PRIMARY KEY
 		, descripcion varchar(60) UNIQUE
@@ -52,23 +58,21 @@ CREATE TABLE
 		id_medico serial PRIMARY KEY,
 		id_persona INTEGER NOT NULL,
 		matricula VARCHAR(255),
+		id__estado_laboral INTEGER NOT NULL,
 		FOREIGN KEY(id_persona) REFERENCES personas(id_persona)
+    	ON DELETE RESTRICT ON UPDATE CASCADE,
+		FOREIGN KEY(id__estado_laboral) REFERENCES estado_laborales(id__estado_laboral)
     	ON DELETE RESTRICT ON UPDATE CASCADE
 	);
 
 CREATE TABLE
  pacientes (
 		id_paciente serial PRIMARY KEY,
-		id_ocupacion INTEGER NOT NULL,
 		id_persona INTEGER NOT NULL,
-    	edad TEXT NOT NULL,
-		posee_ficha_medica VARCHAR(2) CHECK (posee_ficha_medica IN ('Sí', 'No')),
-   		peso DECIMAL(5, 2) NOT NULL CHECK (peso >= 0),  -- Asegura que el peso no sea negativo
+    	fecha_nacimiento DATE NOT NULL,   		peso DECIMAL(5, 2) NOT NULL CHECK (peso >= 0),  -- Asegura que el peso no sea negativo
     	altura DECIMAL(5, 2) NOT NULL CHECK (altura >= 0),  -- Asegura que la altura no sea negativa
 		FOREIGN KEY(id_persona) REFERENCES personas(id_persona)
-    	ON DELETE RESTRICT ON UPDATE CASCADE,
-		FOREIGN KEY(id_ocupacion) REFERENCES ocupaciones(id_ocupacion)
-		ON DELETE RESTRICT ON UPDATE CASCADE
+    	ON DELETE RESTRICT ON UPDATE CASCADE
 	);
 
 CREATE TABLE
@@ -133,21 +137,21 @@ CREATE TABLE
 		id_paciente INTEGER NOT NULL,
 		fecha DATE NOT NULL,
 	    hora TIME NOT NULL,
-		motivo TEXT NOT NULL,
+		observación TEXT,
+		id_estado_cita INTEGER NOT NULL,
 		FOREIGN KEY(id_agenda_medica) REFERENCES agenda_medicas(id_agenda_medica)
 		ON DELETE RESTRICT ON UPDATE CASCADE,
 		FOREIGN KEY(id_paciente) REFERENCES pacientes(id_paciente)
+		ON DELETE RESTRICT ON UPDATE CASCADE,
+		FOREIGN KEY(id_estado_cita) REFERENCES estado_citas(id_estado_cita)
 		ON DELETE RESTRICT ON UPDATE CASCADE
 		
 	);
+
 	CREATE TABLE
 	Aviso_recordatorio(
 		id_aviso_recordatorio serial PRIMARY KEY,
 		id_cita INTEGER NOT NULL,
-		telefono TEXT NOT NULL,
-		id_estado_cita INTEGER NOT NULL,
 		FOREIGN KEY(id_cita) REFERENCES citas(id_cita)
-		ON DELETE RESTRICT ON UPDATE CASCADE,
-		FOREIGN KEY(id_estado_cita) REFERENCES estado_citas(id_estado_cita)
 		ON DELETE RESTRICT ON UPDATE CASCADE
 	);

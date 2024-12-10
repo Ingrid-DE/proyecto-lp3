@@ -50,14 +50,14 @@ def getMedico(medico_id):
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
 
-# Agrega un nuevo medico
+#Agrega un nuevo medico
 @medicoapi.route('/medicos', methods=['POST'])
 def addMedico():
     data = request.get_json()
     medicodao = MedicoDao()
 
     # Validar que el JSON no esté vacío y tenga las propiedades necesarias
-    campos_requeridos = ['id_persona','matricula']
+    campos_requeridos = ['id_persona','matricula','id_estado_laboral']
 
     # Verificar si faltan campos o son vacíos
     for campo in campos_requeridos:
@@ -71,12 +71,13 @@ def addMedico():
         #print("hola")
         id_persona = data['id_persona']
         matricula = data['matricula'].upper()
+        id_estado_laboral = data['id_estado_laboral']
 
-        medico_id = medicodao.guardarMedico(id_persona, matricula)
+        medico_id = medicodao.guardarMedico(id_persona, matricula, id_estado_laboral)
         if medico_id is not None:
             return jsonify({
                 'success': True,
-                'data': {'id_medico': medico_id,'id_persona': id_persona, 'matricula': matricula},
+                'data': {'id_medico': medico_id,'id_persona': id_persona, 'matricula': matricula,'id_estado_laboral':id_estado_laboral},
                 'error': None
             }), 201
         else:
@@ -92,9 +93,9 @@ def addMedico():
 def updateMedico(medico_id):
     data = request.get_json()
     medicodao = MedicoDao()
-
+    #print(medico_id)
     # Validar que el JSON no esté vacío y tenga las propiedades necesarias
-    campos_requeridos = ['id_persona','matricula']
+    campos_requeridos = ['id_persona','matricula','id_estado_laboral' ]
 
     # Verificar si faltan campos o son vacíos
     for campo in campos_requeridos:
@@ -107,11 +108,12 @@ def updateMedico(medico_id):
     try:
         id_persona = data['id_persona']
         matricula = data['matricula'].upper()
+        id_estado_laboral = data['id_estado_laboral']
 
-        if medicodao.updateMedico(medico_id, id_persona, matricula):
+        if medicodao.updateMedico(medico_id, id_persona, matricula, id_estado_laboral):
             return jsonify({
                 'success': True,
-                'data': {'id_medico': medico_id, 'id_persona': id_persona, 'matricula': matricula},
+                'data': {'id_medico': medico_id, 'id_persona': id_persona, 'matricula': matricula,'id_estado_laboral': id_estado_laboral},
                 'error': None
             }), 200
         else:
